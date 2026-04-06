@@ -1,0 +1,8 @@
+Command failed: npx vite build
+
+STDOUT:
+[36mvite v7.3.0 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 1770 modules transformed.
+
+STDERR:
