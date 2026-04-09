@@ -313,62 +313,66 @@ export default function ReportHistory() {
                                         </div>
 
                                         <div className="p-3 flex gap-3">
-                                            {/* Photo (Left) - Compact size */}
+                                            {/* Photo (Left) - Compact but consistent */}
                                             <div className="shrink-0">
                                                 {report?.photos?.[0] ? (
                                                     <RemoteImage
                                                         src={report.photos[0]}
                                                         alt="現場写真"
-                                                        className="w-20 h-20 object-cover rounded-xl border border-gray-100 shadow-sm cursor-zoom-in"
+                                                        className="w-20 h-24 object-cover rounded-xl border border-gray-100 shadow-sm cursor-zoom-in"
                                                         onClick={() => setSelectedImage(report.photos[0])}
                                                     />
                                                 ) : (
-                                                    <div className="w-20 h-20 bg-gray-50 rounded-xl border border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-300">
-                                                        <ImageIcon size={20} />
-                                                        <span className="text-[8px] font-bold mt-1">NO IMAGE</span>
+                                                    <div className="w-20 h-24 bg-gray-50 rounded-xl border border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-300">
+                                                        <ImageIcon size={24} />
+                                                        <span className="text-[8px] font-bold mt-1 uppercase">No Photo</span>
                                                     </div>
                                                 )}
                                             </div>
 
-                                            {/* Content (Right) */}
+                                            {/* Content (Right) - Dynamic height, Larger text */}
                                             <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                                                 <div>
-                                                    <div className="text-[10px] font-black text-blue-700 truncate mb-0.5">{report?.corp}</div>
-                                                    <h2 className="text-base font-black text-gray-900 leading-tight mb-1 truncate line-clamp-1">{report?.category}</h2>
-                                                    {report?.memo && <p className="text-xs text-gray-600 font-bold line-clamp-2 leading-tight">{report.memo}</p>}
+                                                    <div className="text-[11px] font-black text-blue-700 truncate mb-0.5 tracking-tight">{report?.corp}</div>
+                                                    <h2 className="text-xl font-extrabold text-gray-900 leading-tight mb-1">{report?.category}</h2>
+                                                    {report?.memo && (
+                                                        <p className="text-sm text-gray-700 font-bold leading-relaxed whitespace-pre-wrap">
+                                                            {report.memo}
+                                                        </p>
+                                                    )}
                                                 </div>
 
-                                                <div className="flex items-center justify-between mt-2">
-                                                    <div className="flex gap-1.5">
+                                                <div className="flex items-center justify-between mt-3">
+                                                    <div className="flex gap-2">
                                                         <button 
                                                             onClick={() => handleDelete(item.id)} 
-                                                            className="w-8 h-8 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm"
+                                                            className="w-9 h-9 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm"
                                                             title="削除"
                                                         >
-                                                            <Trash2 size={16} strokeWidth={2.5} />
+                                                            <Trash2 size={18} strokeWidth={2.5} />
                                                         </button>
                                                         <Link 
                                                             to="/report" 
                                                             state={{ reportData: { ...item.data, id: item.id } }} 
-                                                            className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm"
+                                                            className="w-9 h-9 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm"
                                                             title="更新"
                                                         >
-                                                            <Edit size={16} strokeWidth={2.5} />
+                                                            <Edit size={18} strokeWidth={2.5} />
                                                         </Link>
                                                         {report?.location && (
                                                             <a 
                                                                 href={`https://www.google.com/maps/search/?api=1&query=${report.location.lat},${report.location.lng}`} 
                                                                 target="_blank" 
                                                                 rel="noreferrer" 
-                                                                className="w-8 h-8 bg-green-50 text-green-700 rounded-lg flex items-center justify-center hover:bg-green-700 hover:text-white transition-all border border-green-100 shadow-sm"
+                                                                className="w-9 h-9 bg-green-50 text-green-700 rounded-lg flex items-center justify-center hover:bg-green-700 hover:text-white transition-all border border-green-100 shadow-sm"
                                                                 title="地図"
                                                             >
-                                                                <MapPin size={16} strokeWidth={2.5} />
+                                                                <MapPin size={18} strokeWidth={2.5} />
                                                             </a>
                                                         )}
                                                     </div>
                                                     <div className="flex items-center text-gray-300">
-                                                        <ChevronRight size={18} />
+                                                        <ChevronRight size={20} />
                                                     </div>
                                                 </div>
                                             </div>
