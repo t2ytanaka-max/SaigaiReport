@@ -378,19 +378,20 @@ export default function ReportForm() {
         const isoDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
 
         // Determine ID strategy
-        // We ONLY preserve ID if we are strictly in EDIT mode (loaded from location state)
-        // Otherwise, we ensure ID is undefined so db.js generates a fresh one.
         const originalId = location.state?.reportData?.id;
 
+        // 【修正】不要なFileListオブジェクトを除外する
+        // photos_camera と photos_library は firebase には送れないため削除
+        const { photos_camera, photos_library, ...cleanData } = data;
+
         const reportData = {
-            ...data,
-            id: originalId, // Safely use original ID or undefined (if New)
-            reportDate: isoDate, // Valid ISO string for GAS/DB
-            photos: finalPhotos, // Store Base64 strings (merged list)
+            ...cleanData,
+            id: originalId,
+            reportDate: isoDate,
+            photos: finalPhotos,
             location: position
         }
 
-        // Final cleanup: if originalId is undefined, make sure 'id' key doesn't overwrite with something else
         if (!originalId) {
             delete reportData.id;
         }
