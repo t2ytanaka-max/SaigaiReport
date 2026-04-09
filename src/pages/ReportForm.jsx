@@ -406,6 +406,7 @@ export default function ReportForm() {
         // Auto-refresh date to exact send time (as requested)
         const now = new Date();
         const sendDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+        const finalFormData = { ...formData, reportDate: sendDate };
         try {
             // 1. Always save to Outbox first (Offline First)
             // 【修正】ここでもFileListを除外してから保存する
