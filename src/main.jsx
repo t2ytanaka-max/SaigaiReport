@@ -12,10 +12,27 @@ if (/Line/i.test(navigator.userAgent) && !window.location.search.includes('openE
   window.location.href = newUrl.toString();
 }
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>,
-)
+console.log("main.jsx: Execution started");
+const rootElement = document.getElementById('root');
+
+if (!rootElement) {
+  console.error("main.jsx: Root element not found!");
+} else {
+  try {
+    console.log("main.jsx: Initializing React Root");
+    // Show a temporary indicator in case React fails
+    rootElement.innerHTML = '<div style="padding:20px; color:#666;">アプリを起動しています...</div>';
+    
+    createRoot(rootElement).render(
+      <StrictMode>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </StrictMode>,
+    );
+    console.log("main.jsx: React render called successfully");
+  } catch (error) {
+    console.error("main.jsx: Critical render error:", error);
+    rootElement.innerHTML = '<div style="padding:20px; color:red;">エラーが発生しました: ' + error.message + '</div>';
+  }
+}
