@@ -150,8 +150,8 @@ export default function ReportHistory() {
 
             const mergedList = Array.from(mergedMap.values());
             const sorted = mergedList.sort((a, b) => {
-                const dateA = a.data.reportDate ? new Date(a.data.reportDate).getTime() : 0;
-                const dateB = b.data.reportDate ? new Date(b.data.reportDate).getTime() : 0;
+                const dateA = a?.data?.reportDate ? new Date(a.data.reportDate).getTime() : 0;
+                const dateB = b?.data?.reportDate ? new Date(b.data.reportDate).getTime() : 0;
                 return dateB - dateA;
             });
 
@@ -241,8 +241,7 @@ export default function ReportHistory() {
             // Always try to delete from local outbox just in case
             await deleteFromOutbox(id);
 
-            // Refresh list
-            loadReports();
+            // Refresh list (Firestore's onSnapshot handles this automatically, so no manual fetch needed)
             setStatus('success');
 
         } catch (e) {
