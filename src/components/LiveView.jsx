@@ -284,17 +284,7 @@ export default function LiveView() {
                                 <div className="absolute top-4 left-4 flex flex-col gap-2">
                                     <div className="bg-red-600 text-white px-3 py-1.5 rounded-full text-[10px] font-black animate-pulse flex items-center gap-1.5 shadow-lg border border-white/50">
                                         <div className="w-2 h-2 bg-white rounded-full animate-ping"></div>
-                                        LIVE OVERWHELMING
-                                    </div>
-                                    <div className="bg-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[10px] font-black flex items-center gap-2 border border-white/20">
-                                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                                        送信済: {sendCount}回
-                                    </div>
-                                </div>
-
-                                <div className="absolute bottom-4 right-4 animate-bounce">
-                                    <div className="bg-blue-600 text-white p-2 rounded-full shadow-lg border-2 border-white">
-                                        <CheckCircle2 size={20} />
+                                        ライブ配信中
                                     </div>
                                 </div>
                             </div>
