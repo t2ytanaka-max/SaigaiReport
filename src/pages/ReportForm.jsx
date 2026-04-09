@@ -445,16 +445,18 @@ export default function ReportForm() {
                         updated_at: serverTimestamp(),
                     };
 
+                    if (!db_fs) throw new Error("Firebaseが初期化されていません。");
+
                     await setDoc(doc(db_fs, "reports", reportId), firestoreData);
 
                     // Mark as synced
                     if (id) {
                         await updateStatus(id, 'synced');
                     }
-                    alert('サーバー（Firebase）へ送信しました！');
+                    alert('サーバー（Firebase）へ送信が完了しました！');
                 } catch (e) {
                     console.error("Firebase Sync failed", e);
-                    alert('送信に失敗しましたが、端末には保存されました。');
+                    alert('通信トラブルのためサーバー送信に失敗しましたが、端末（履歴）には保存されました。電波の良い場所で再試行してください。\nエラー内容: ' + e.message);
                 }
             } else {
                 alert('オフラインのため送信キューに保存しました。通信回復時に再送してください。');

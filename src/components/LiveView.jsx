@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from './ui/Button';
 import { db_fs } from '../lib/firebase';
 import { collection, query, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { Video, Camera, StopCircle, Eye, RefreshCw, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 const corps = [
     '1分団（久原）', '1分団（前船津）', '2分団', '3分団', '4分団（武部）', '4分団（大多武）',
@@ -49,7 +50,7 @@ export default function LiveView() {
 
     // Watching mode stream listener
     useEffect(() => {
-        if (mode === 'watch') {
+        if (mode === 'watch' && db_fs) {
             const q = query(collection(db_fs, "live_streams"));
             const unsubscribe = onSnapshot(q, (snapshot) => {
                 const streams = snapshot.docs.map(doc => ({
@@ -78,7 +79,7 @@ export default function LiveView() {
             return;
         }
         if (navigator.userAgent.includes('Line')) {
-            setErrorMsg('LINE内蔵ブラウザでは配信できません。標準ブラウザを使用してください。');
+            setErrorMsg('LINE内蔵ブラウザでは配信できません。システムの標準ブラウザ（Chrome/Safari等）を使用してください。');
             return;
         }
 
@@ -110,7 +111,7 @@ export default function LiveView() {
 
     const stopBroadcast = () => {
         const targetCorp = latestCorpRef.current;
-        if (targetCorp) {
+        if (targetCorp && db_fs) {
             deleteDoc(doc(db_fs, "live_streams", targetCorp)).catch(e => console.error(e));
         }
         if (streamRef.current) {
@@ -121,7 +122,7 @@ export default function LiveView() {
     };
 
     const sendFrame = async () => {
-        if (!videoRef.current || !canvasRef.current || !isBroadcasting || isSendingRef.current) return;
+        if (!videoRef.current || !canvasRef.current || !isBroadcasting || isSendingRef.current || !db_fs) return;
         
         try {
             isSendingRef.current = true;
@@ -162,53 +163,144 @@ export default function LiveView() {
     };
 
     return (
-        <div className="bg-white p-4 rounded-lg min-h-[400px]">
-            <div className="flex bg-gray-100 p-1 rounded-lg mb-4">
-                <button onClick={() => setMode('watch')} className={`flex-1 py-1.5 text-sm font-bold rounded-md ${mode === 'watch' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-500'}`}>LIVE視聴</button>
-                <button onClick={() => setMode('broadcast')} className={`flex-1 py-1.5 text-sm font-bold rounded-md ${mode === 'broadcast' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'}`}>配信する</button>
+        <div className="bg-gray-50 p-2 sm:p-4 rounded-3xl min-h-[400px]">
+            {/* View Switcher */}
+            <div className="flex bg-gray-200/50 p-1.5 rounded-2xl mb-6 shadow-inner">
+                <button 
+                    onClick={() => { setMode('watch'); stopBroadcast(); }} 
+                    className={`flex-1 py-3 text-sm font-black rounded-xl flex items-center justify-center gap-2 transition-all ${mode === 'watch' ? 'bg-white text-red-600 shadow-md transform scale-[1.02]' : 'text-gray-500'}`}
+                >
+                    <Eye size={18} /> 現場を視聴する
+                </button>
+                <button 
+                    onClick={() => setMode('broadcast')} 
+                    className={`flex-1 py-3 text-sm font-black rounded-xl flex items-center justify-center gap-2 transition-all ${mode === 'broadcast' ? 'bg-white text-blue-600 shadow-md transform scale-[1.02]' : 'text-gray-500'}`}
+                >
+                    <Video size={18} /> 現場を配信する
+                </button>
             </div>
 
             {mode === 'watch' ? (
-                <div className="space-y-4">
+                <div className="space-y-6">
                     {activeStreams.length === 0 ? (
-                        <div className="text-center py-20 text-gray-400 text-sm">配信中の現場はありません。</div>
+                        <div className="text-center py-24 bg-white rounded-3xl border border-dashed border-gray-200 shadow-sm flex flex-col items-center">
+                            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                                <Video size={32} className="text-gray-300" />
+                            </div>
+                            <p className="text-gray-500 font-bold">配信中の現場はありません</p>
+                            <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-widest">No active live streams</p>
+                        </div>
                     ) : (
-                        <div className="grid grid-cols-1 gap-4">
+                        <div className="grid grid-cols-1 gap-6">
                             {activeStreams.map((s, i) => (
-                                <div key={i} className="border rounded-lg overflow-hidden bg-black relative">
-                                    <div className="absolute top-0 left-0 right-0 bg-black/50 p-2 text-white text-xs font-bold flex justify-between">
-                                        <span>{s.corp}</span>
-                                        <span className="text-red-400 animate-pulse">● LIVE</span>
+                                <div key={i} className="group relative bg-black rounded-3xl overflow-hidden shadow-xl border-2 border-white aspect-video sm:aspect-auto">
+                                    {/* Overlay Header */}
+                                    <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-4 z-10 flex justify-between items-start">
+                                        <div className="flex flex-col">
+                                            <span className="text-white font-black text-sm drop-shadow-md">{s.corp}</span>
+                                            <span className="text-gray-300 text-[10px] font-bold">LIVE STREAMING...</span>
+                                        </div>
+                                        <div className="flex items-center bg-red-600 text-white px-3 py-1 rounded-full text-[10px] font-black animate-pulse shadow-lg ring-2 ring-white/50">
+                                            ● LIVE
+                                        </div>
                                     </div>
-                                    <img src={s.image} alt="Live" className="w-full h-auto max-h-[60vh] object-contain" />
-                                    {s.memo && <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2 text-white text-[10px]">{s.memo}</div>}
+                                    
+                                    <img src={s.image} alt="Live" className="w-full h-full object-cover sm:h-[400px]" />
+                                    
+                                    {/* Overlay Bottom */}
+                                    {s.memo && (
+                                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 pt-10">
+                                            <div className="flex items-center gap-2 text-white/90">
+                                                <AlertCircle size={14} className="shrink-0" />
+                                                <p className="text-xs font-bold leading-tight">{s.memo}</p>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
                     )}
                 </div>
             ) : (
-                <div className="space-y-4">
-                    {errorMsg && <div className="bg-red-50 text-red-600 p-3 rounded text-xs">{errorMsg}</div>}
+                <div className="space-y-6 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                    {errorMsg && (
+                        <div className="bg-red-50 border-2 border-red-100 text-red-600 p-4 rounded-2xl text-sm font-bold flex items-center gap-3 animate-in slide-in-from-top-4 duration-300">
+                            <AlertCircle size={20} className="shrink-0" />
+                            {errorMsg}
+                        </div>
+                    )}
                     
                     {!isBroadcasting ? (
-                        <div className="space-y-4">
-                            <div>
-                                <label className="text-sm font-bold block mb-1">分団名</label>
-                                <select className="w-full h-12 border rounded bg-white px-3" value={myCorp} onChange={e => setMyCorp(e.target.value)}>
-                                    <option value="">選択してください</option>
-                                    {corps.map(c => <option key={c} value={c}>{c}</option>)}
-                                </select>
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest block ml-1">配信者情報</label>
+                                <div className="space-y-4">
+                                    <select 
+                                        className="w-full h-14 border-2 border-gray-100 rounded-2xl bg-gray-50 px-4 text-gray-900 font-bold focus:border-blue-500 focus:bg-white transition-all outline-none text-base"
+                                        value={myCorp} 
+                                        onChange={e => setMyCorp(e.target.value)}
+                                    >
+                                        <option value="">所属分団を選択</option>
+                                        {corps.map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
+                                    <textarea 
+                                        placeholder="活動メモ (例: 第3ポンプ放水開始)" 
+                                        className="w-full min-h-[100px] border-2 border-gray-100 rounded-2xl bg-gray-50 px-4 py-3 text-gray-900 font-bold focus:border-blue-500 focus:bg-white transition-all outline-none text-base"
+                                        value={memo}
+                                        onChange={e => setMemo(e.target.value)}
+                                    />
+                                </div>
                             </div>
-                            <Button className="w-full h-14 bg-red-600" onClick={startBroadcast} disabled={isLoading}>{isLoading ? 'カメラ起動中...' : '配信を開始する'}</Button>
+                            
+                            <Button 
+                                className="w-full h-16 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl font-black text-lg shadow-xl shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50" 
+                                onClick={startBroadcast} 
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <><RefreshCw size={24} className="animate-spin" /> カメラ起動中...</>
+                                ) : (
+                                    <><Camera size={24} /> リアルタイム配信を開始</>
+                                )}
+                            </Button>
+                            
+                            <p className="text-[10px] text-gray-400 text-center font-bold px-4 leading-relaxed">
+                                ※3秒おきに最新画像を送信します。通信環境をご確認ください。<br/>配信中はカメラを閉じないでください。
+                            </p>
                         </div>
                     ) : (
-                        <div className="space-y-3">
-                            <Button className="w-full h-14 bg-gray-800" onClick={stopBroadcast}>配信を停止</Button>
-                            <div className="relative border-4 border-red-500 rounded-lg overflow-hidden bg-black">
-                                <video ref={videoRef} autoPlay playsInline muted className="w-full h-auto" />
+                        <div className="space-y-4">
+                            <Button 
+                                className="w-full h-16 bg-gray-900 text-white rounded-2xl font-black text-lg shadow-xl border-4 border-white active:scale-[0.98] transition-all flex items-center justify-center gap-3" 
+                                onClick={stopBroadcast}
+                            >
+                                <StopCircle size={24} /> 配信を停止する
+                            </Button>
+                            
+                            <div className="relative border-4 border-red-500 rounded-3xl overflow-hidden bg-black shadow-2xl ring-8 ring-red-500/10">
+                                <video ref={videoRef} autoPlay playsInline muted className="w-full h-auto aspect-video object-cover" />
                                 <canvas ref={canvasRef} className="hidden" />
-                                <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded text-[10px] animate-pulse">配信中: {sendCount}回送信</div>
+                                
+                                <div className="absolute top-4 left-4 flex flex-col gap-2">
+                                    <div className="bg-red-600 text-white px-3 py-1.5 rounded-full text-[10px] font-black animate-pulse flex items-center gap-1.5 shadow-lg border border-white/50">
+                                        <div className="w-2 h-2 bg-white rounded-full animate-ping"></div>
+                                        LIVE OVERWHELMING
+                                    </div>
+                                    <div className="bg-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[10px] font-black flex items-center gap-2 border border-white/20">
+                                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                                        送信済: {sendCount}回
+                                    </div>
+                                </div>
+
+                                <div className="absolute bottom-4 right-4 animate-bounce">
+                                    <div className="bg-blue-600 text-white p-2 rounded-full shadow-lg border-2 border-white">
+                                        <CheckCircle2 size={20} />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-blue-50 border-2 border-blue-100 p-4 rounded-2xl text-[11px] text-blue-700 font-bold">
+                                配信内容: {myCorp} {memo ? ` - ${memo}` : ''}
                             </div>
                         </div>
                     )}
