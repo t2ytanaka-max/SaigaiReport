@@ -389,7 +389,7 @@ export default function ReportForm() {
             id: originalId,
             reportDate: isoDate,
             photos: finalPhotos,
-            location: position
+            location: position ? { lat: Number(position.lat), lng: Number(position.lng) } : null
         }
 
         if (!originalId) {
