@@ -276,23 +276,22 @@ export default function ReportHistory() {
             <main className="px-4 pt-4">
                 {viewMode === 'list' ? (
                     reports.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-24 text-gray-400 bg-white rounded-3xl border border-dashed border-gray-200 mt-4">
-                            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                                <Info size={40} className="text-gray-300" />
+                        <div className="flex flex-col items-center justify-center py-24 text-gray-400 bg-white rounded-2xl border border-dashed border-gray-200 mt-4">
+                            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                                <Info size={32} className="text-gray-300" />
                             </div>
-                            <p className="font-bold text-lg">現在、報告はありません</p>
-                            <p className="text-sm mt-1">新しい情報を入力して共有しましょう</p>
+                            <p className="font-bold text-base">現在、報告はありません</p>
                         </div>
                     ) : (
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             {reports.map((item) => {
                                 const report = item.data;
                                 const statusColors = {
-                                    '対応中': 'bg-red-500 text-white shadow-red-200',
-                                    '応急処置済み２次対応者へ引き継ぎ': 'bg-blue-500 text-white shadow-blue-200',
-                                    '現場確認済み 対応不可': 'bg-purple-500 text-white shadow-purple-200',
-                                    '現場不明 差戻し': 'bg-green-600 text-white shadow-green-200',
-                                    '終了': 'bg-gray-800 text-white shadow-gray-300',
+                                    '対応中': 'bg-red-600 text-white shadow-sm',
+                                    '応急処置済み２次対応者へ引き継ぎ': 'bg-blue-600 text-white shadow-sm',
+                                    '現場確認済み 対応不可': 'bg-purple-600 text-white shadow-sm',
+                                    '現場不明 差戻し': 'bg-green-700 text-white shadow-sm',
+                                    '終了': 'bg-gray-900 text-white shadow-sm',
                                 };
                                 const dateStr = (() => {
                                     try {
@@ -302,58 +301,75 @@ export default function ReportHistory() {
                                 })();
 
                                 return (
-                                    <div key={item.id} className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden transition-all active:scale-[0.98] active:shadow-none hover:shadow-lg">
-                                        {/* Status Header */}
-                                        <div className="flex justify-between items-center px-4 pt-4 pb-2">
-                                            <span className={`px-4 py-1.5 rounded-full text-xs font-black shadow-lg ${statusColors[report?.status] || 'bg-gray-200 text-gray-700'}`}>
+                                    <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all active:scale-[0.99] hover:border-blue-100">
+                                        {/* Status & Date Header */}
+                                        <div className="flex justify-between items-center px-3 py-2 bg-gray-50/50 border-b border-gray-50">
+                                            <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${statusColors[report?.status] || 'bg-gray-200 text-gray-700'}`}>
                                                 {report?.status}
                                             </span>
-                                            <div className="flex items-center text-gray-400 text-xs font-bold gap-1">
-                                                <Clock size={12} /> {dateStr}
+                                            <div className="flex items-center text-gray-900 text-xs font-black gap-1">
+                                                <Clock size={12} className="text-gray-400" /> {dateStr}
                                             </div>
                                         </div>
 
-                                        <div className="p-4 flex gap-4">
-                                            {/* Photo (Left) */}
+                                        <div className="p-3 flex gap-3">
+                                            {/* Photo (Left) - Compact size */}
                                             <div className="shrink-0">
                                                 {report?.photos?.[0] ? (
                                                     <RemoteImage
                                                         src={report.photos[0]}
                                                         alt="現場写真"
-                                                        className="w-28 h-28 object-cover rounded-2xl border-2 border-gray-50 shadow-md cursor-zoom-in"
+                                                        className="w-20 h-20 object-cover rounded-xl border border-gray-100 shadow-sm cursor-zoom-in"
                                                         onClick={() => setSelectedImage(report.photos[0])}
                                                     />
                                                 ) : (
-                                                    <div className="w-28 h-28 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-300">
-                                                        <ImageIcon size={30} className="mb-1" />
-                                                        <span className="text-[10px] font-bold">画像なし</span>
+                                                    <div className="w-20 h-20 bg-gray-50 rounded-xl border border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-300">
+                                                        <ImageIcon size={20} />
+                                                        <span className="text-[8px] font-bold mt-1">NO IMAGE</span>
                                                     </div>
                                                 )}
                                             </div>
 
                                             {/* Content (Right) */}
-                                            <div className="flex-1 min-w-0 flex flex-col justify-between">
+                                            <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                                                 <div>
-                                                    <div className="text-xs font-black text-blue-600 uppercase tracking-wider mb-0.5">{report?.corp}</div>
-                                                    <h2 className="text-lg font-black text-gray-900 leading-tight mb-2 truncate-2-lines">{report?.category}</h2>
-                                                    {report?.memo && <p className="text-sm text-gray-600 font-medium line-clamp-2 leading-relaxed">{report.memo}</p>}
+                                                    <div className="text-[10px] font-black text-blue-700 truncate mb-0.5">{report?.corp}</div>
+                                                    <h2 className="text-base font-black text-gray-900 leading-tight mb-1 truncate line-clamp-1">{report?.category}</h2>
+                                                    {report?.memo && <p className="text-xs text-gray-600 font-bold line-clamp-2 leading-tight">{report.memo}</p>}
                                                 </div>
 
-                                                <div className="flex items-center justify-between mt-3">
-                                                    <div className="flex gap-2">
-                                                        <button onClick={() => handleDelete(item.id)} className="w-9 h-9 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-colors">
-                                                            <Trash2 size={16} />
+                                                <div className="flex items-center justify-between mt-2">
+                                                    <div className="flex gap-1.5">
+                                                        <button 
+                                                            onClick={() => handleDelete(item.id)} 
+                                                            className="w-8 h-8 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm"
+                                                            title="削除"
+                                                        >
+                                                            <Trash2 size={16} strokeWidth={2.5} />
                                                         </button>
-                                                        <Link to="/report" state={{ reportData: { ...item.data, id: item.id } }} className="w-9 h-9 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center hover:bg-blue-50 hover:text-blue-500 transition-colors">
-                                                            <Edit size={16} />
+                                                        <Link 
+                                                            to="/report" 
+                                                            state={{ reportData: { ...item.data, id: item.id } }} 
+                                                            className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm"
+                                                            title="更新"
+                                                        >
+                                                            <Edit size={16} strokeWidth={2.5} />
                                                         </Link>
                                                         {report?.location && (
-                                                            <a href={`https://www.google.com/maps/search/?api=1&query=${report.location.lat},${report.location.lng}`} target="_blank" rel="noreferrer" className="w-9 h-9 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center hover:bg-green-50 hover:text-green-600 transition-colors">
-                                                                <MapPin size={16} />
+                                                            <a 
+                                                                href={`https://www.google.com/maps/search/?api=1&query=${report.location.lat},${report.location.lng}`} 
+                                                                target="_blank" 
+                                                                rel="noreferrer" 
+                                                                className="w-8 h-8 bg-green-50 text-green-700 rounded-lg flex items-center justify-center hover:bg-green-700 hover:text-white transition-all border border-green-100 shadow-sm"
+                                                                title="地図"
+                                                            >
+                                                                <MapPin size={16} strokeWidth={2.5} />
                                                             </a>
                                                         )}
                                                     </div>
-                                                    <ChevronRight size={20} className="text-gray-300" />
+                                                    <div className="flex items-center text-gray-300">
+                                                        <ChevronRight size={18} />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
