@@ -97,42 +97,47 @@ export default function ReportHistory() {
     const previousReportIds = useRef(new Set());
     const isFirstLoad = useRef(true);
 
+    const refreshData = async (serverData = []) => {
+        try {
+            const localData = await getOutbox();
+            const mergedMap = new Map();
+            serverData.forEach(item => {
+                mergedMap.set(item.id, item);
+            });
+            localData.forEach(item => {
+                mergedMap.set(item.id, { ...item, source: 'local' });
+            });
+
+            const mergedList = Array.from(mergedMap.values());
+            const sorted = mergedList.sort((a, b) => {
+                const dateA = a?.data?.reportDate ? new Date(a.data.reportDate).getTime() : 0;
+                const dateB = b?.data?.reportDate ? new Date(b.data.reportDate).getTime() : 0;
+                return dateB - dateA;
+            });
+
+            detectChangesAndNotify(sorted);
+            setReports(sorted);
+            setStatus('success');
+        } catch (err) {
+            console.error("Refresh failed:", err);
+            if (serverData.length > 0) setReports(serverData);
+            setStatus('success');
+        }
+    };
+
     // Initial Load & Real-time Subscription
     useEffect(() => {
         setStatus('loading');
+        let currentServerData = [];
         try {
             const q = query(collection(db_fs, "reports"));
             const unsubscribe = onSnapshot(q, (snapshot) => {
-                const serverData = snapshot.docs.map(doc => ({
+                currentServerData = snapshot.docs.map(doc => ({
                     id: doc.id,
                     data: doc.data(),
                     source: 'server'
                 }));
-
-                getOutbox().then(localData => {
-                    const mergedMap = new Map();
-                    serverData.forEach(item => {
-                        mergedMap.set(item.id, item);
-                    });
-                    localData.forEach(item => {
-                        mergedMap.set(item.id, { ...item, source: 'local' });
-                    });
-
-                    const mergedList = Array.from(mergedMap.values());
-                    const sorted = mergedList.sort((a, b) => {
-                        const dateA = a?.data?.reportDate ? new Date(a.data.reportDate).getTime() : 0;
-                        const dateB = b?.data?.reportDate ? new Date(b.data.reportDate).getTime() : 0;
-                        return dateB - dateA;
-                    });
-
-                    detectChangesAndNotify(sorted);
-                    setReports(sorted);
-                    setStatus('success');
-                }).catch(err => {
-                    console.error("Local DB read failed:", err);
-                    setReports(serverData);
-                    setStatus('success');
-                });
+                refreshData(currentServerData);
             }, (error) => {
                 console.error("Firestore error:", error);
                 setStatus('error');
@@ -186,11 +191,21 @@ export default function ReportHistory() {
         setStatus('loading');
         try {
             const target = reports.find(r => r.id === id);
-            if (target && (target.source === 'server' || target.status === 'synced')) {
+            
+            // 1. Delete from Server if it exists there
+            if (target && target.source === 'server') {
                 await deleteDoc(doc(db_fs, "reports", String(id)));
             }
+            
+            // 2. Delete from Local Outbox
             await deleteFromOutbox(id);
+            
+            // 3. Update UI immediately by removing from state
+            setReports(prev => prev.filter(r => r.id !== id));
             setStatus('success');
+            
+            // 4. Also trigger a full refresh to be sure
+            refreshData(reports.filter(r => r.source === 'server' && r.id !== id));
         } catch (e) {
             console.error(e);
             alert('削除失敗: ' + e.message);
