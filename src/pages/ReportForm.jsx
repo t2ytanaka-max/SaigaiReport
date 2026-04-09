@@ -406,11 +406,11 @@ export default function ReportForm() {
         // Auto-refresh date to exact send time (as requested)
         const now = new Date();
         const sendDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-        const finalFormData = { ...formData, reportDate: sendDate };
-
         try {
             // 1. Always save to Outbox first (Offline First)
-            const id = await addToOutbox(finalFormData); // Capture the ID returned by addToOutbox
+            // 【修正】ここでもFileListを除外してから保存する
+            const { photos_camera, photos_library, ...outboxSafeData } = finalFormData;
+            const id = await addToOutbox(outboxSafeData);
 
             // Slight delay to ensure DB write before navigation (though await should handle it)
             // setTimeout(() => navigate('/'), 100); // Removed this line as it navigates too early
@@ -440,8 +440,11 @@ export default function ReportForm() {
                     }
 
                     // 2b. Save Report to Firestore
+                    // 【重要】Firestoreに保存できない生データを確実に排除する
+                    const { photos_camera, photos_library, ...firestoreSafeData } = finalFormData;
+
                     const firestoreData = {
-                        ...finalFormData,
+                        ...firestoreSafeData,
                         photos: updatedPhotos,
                         updated_at: serverTimestamp(),
                     };
