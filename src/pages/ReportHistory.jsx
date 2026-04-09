@@ -123,46 +123,56 @@ export default function ReportHistory() {
         setStatus('loading');
 
         // Create query for FireStore
-        const q = query(collection(db_fs, "reports"), orderBy("updated_at", "desc"));
+        // Create query for FireStore (Initially simple to avoid index errors)
+        const q = query(collection(db_fs, "reports"));
 
         // Subscribe to real-time updates
-        const unsubscribe = onSnapshot(q, async (snapshot) => {
+        const unsubscribe = onSnapshot(q, (snapshot) => {
             const serverData = snapshot.docs.map(doc => ({
                 id: doc.id,
                 data: doc.data(),
                 source: 'server'
             }));
 
-            const localData = await getOutbox();
-            
-            // Merge logic (Local Priority)
-            const mergedMap = new Map();
+            // Async inside sync snapshot must be handled carefully
+            getOutbox().then(localData => {
+                // Merge logic (Local Priority)
+                const mergedMap = new Map();
 
-            // Add server items
-            serverData.forEach(item => {
-                mergedMap.set(item.id, item);
+                // Add server items
+                serverData.forEach(item => {
+                    mergedMap.set(item.id, item);
+                });
+
+                // Always overwrite with local data (Optimistic UI) 
+                localData.forEach(item => {
+                    mergedMap.set(item.id, { ...item, source: 'local' });
+                });
+
+                const mergedList = Array.from(mergedMap.values());
+                const sorted = mergedList.sort((a, b) => {
+                    const dateA = a?.data?.reportDate ? new Date(a.data.reportDate).getTime() : 0;
+                    const dateB = b?.data?.reportDate ? new Date(b.data.reportDate).getTime() : 0;
+                    return dateB - dateA;
+                });
+
+                // Detect changes and play sound
+                detectChangesAndNotify(sorted);
+                
+                setReports(sorted);
+                setStatus('success');
+            }).catch(dbErr => {
+                console.error("Local DB read error:", dbErr);
+                // Fallback to server data only
+                setReports(serverData);
+                setStatus('success');
             });
 
-            // Always overwrite with local data (Optimistic UI) 
-            localData.forEach(item => {
-                mergedMap.set(item.id, { ...item, source: 'local' });
-            });
-
-            const mergedList = Array.from(mergedMap.values());
-            const sorted = mergedList.sort((a, b) => {
-                const dateA = a?.data?.reportDate ? new Date(a.data.reportDate).getTime() : 0;
-                const dateB = b?.data?.reportDate ? new Date(b.data.reportDate).getTime() : 0;
-                return dateB - dateA;
-            });
-
-            // Detect changes and play sound
-            detectChangesAndNotify(sorted);
-            
-            setReports(sorted);
-            setStatus('success');
         }, (error) => {
             console.error("Firestore Subscribe error:", error);
             setStatus('error');
+            // Show error info in debug for a moment if white screen problem persists
+            setDebugInfo(error.message);
         });
 
         return () => unsubscribe();
