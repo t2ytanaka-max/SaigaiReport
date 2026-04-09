@@ -409,8 +409,8 @@ export default function ReportForm() {
         const finalFormData = { ...formData, reportDate: sendDate };
         try {
             // 1. Always save to Outbox first (Offline First)
-            // 【修正】ここでもFileListを除外してから保存する
-            const { photos_camera, photos_library, ...outboxSafeData } = finalFormData;
+            // 【修正】ここでもデータを浄化（プロトタイプ等の除去）してから保存する
+            const { photos_camera, photos_library, ...outboxSafeData } = JSON.parse(JSON.stringify(finalFormData));
             const id = await addToOutbox(outboxSafeData);
 
             // Slight delay to ensure DB write before navigation (though await should handle it)
@@ -441,11 +441,12 @@ export default function ReportForm() {
                     }
 
                     // 2b. Save Report to Firestore
-                    // 【重要】Firestoreに保存できない生データを確実に排除する
-                    const { photos_camera, photos_library, ...firestoreSafeData } = finalFormData;
+                    // 【重要】Firestoreに保存できない生データや隠れた特殊オブジェクトを確実に排除する
+                    // JSON化して戻すことで、純粋なJavaScriptオブジェクト（POJO）に強制変換します
+                    const { photos_camera, photos_library, ...finalCleanData } = JSON.parse(JSON.stringify(finalFormData));
 
                     const firestoreData = {
-                        ...firestoreSafeData,
+                        ...finalCleanData,
                         photos: updatedPhotos,
                         updated_at: serverTimestamp(),
                     };
