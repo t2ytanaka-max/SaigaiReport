@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from './ui/Button';
-import { GAS_URL } from '../config';
+import { db_fs } from '../lib/firebase';
+import { collection, query, onSnapshot, doc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 // A minimal placeholder for corp selection just for broadcasting
 const corps = [
@@ -60,55 +61,20 @@ export default function LiveView() {
     const [lastSendLog, setLastSendLog] = useState(''); // 配信中の送信状況
     const [lastSendError, setLastSendError] = useState(''); // 送込エラー
 
-    const checkConnection = async () => {
-        setConnStatus('checking');
-        setConnError('');
-        try {
-            const res = await fetch(`${GAS_URL}?action=ping&t=${Date.now()}`);
-            if (res.ok) {
-                const data = await res.json();
-                if (data.status === 'success') {
-                    setConnStatus('ok');
-                    // data.liveInfo に行数などの情報が含まれる
-                    console.log("GAS Connection OK:", data);
-                    if (data.liveInfo) {
-                        setConnError(data.liveInfo); // エラー表示箇所を使って情報を出す
-                    }
-                } else {
-                    setConnStatus('fail');
-                    setConnError(data.message || 'Unknown error');
-                }
-            } else {
-                setConnStatus('fail');
-                setConnError(`HTTP ${res.status}`);
-            }
-        } catch (e) {
-            setConnStatus('fail');
-            setConnError(e.message);
-        }
-    };
 
-    // Fetch live streams
-    const fetchStreams = async () => {
-        try {
-            const res = await fetch(`${GAS_URL}?action=getLive&t=${Date.now()}`, { cache: 'no-store' });
-            if (res.ok) {
-                const data = await res.json();
-                if (Array.isArray(data)) {
-                    setActiveStreams(data);
-                }
-            }
-        } catch (e) {
-            console.error("Failed to fetch live streams:", e);
-        }
-    };
-
-    // Watcher Polling
+    // Fetch live streams (Real-time simplified)
     useEffect(() => {
         if (mode === 'watch') {
-            fetchStreams(); // Initial fetch
-            const interval = setInterval(fetchStreams, 3000); // 3秒おきに更新 (旧5秒比で改善)
-            return () => clearInterval(interval);
+            const q = query(collection(db_fs, "live_streams"));
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+                const streams = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                // Sort by timestamp if needed, otherwise just set
+                setActiveStreams(streams);
+            });
+            return () => unsubscribe();
         }
     }, [mode]);
 
@@ -188,17 +154,9 @@ export default function LiveView() {
         console.log("stopBroadcast called for:", targetCorp);
 
         if (targetCorp) {
-            // 最終通知をサーバーに送る (非同期)
-            fetch(`${GAS_URL}?action=liveUpdate&t=${Date.now()}`, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({
-                    action: 'liveUpdate',
-                    corp: targetCorp,
-                    status: 'OFFLINE'
-                })
-            }).catch(e => console.error("OFFLINE cleanup failed:", e));
+            // Firestoreから配信情報を削除 (非同期)
+            deleteDoc(doc(db_fs, "live_streams", targetCorp))
+                .catch(e => console.error("Live cleanup failed:", e));
         }
 
         if (intervalRef.current) {
@@ -285,21 +243,13 @@ export default function LiveView() {
             const base64Image = canvas.toDataURL('image/jpeg', 0.3);
             let method = video.videoWidth ? `${targetWidth}x${targetHeight}` : "fallback";
 
-            // POSTリクエスト
-            const postUrl = `${GAS_URL}?action=liveUpdate&t=${Date.now()}`;
-
-            await fetch(postUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({
-                    action: 'liveUpdate',
-                    corp: myCorp,
-                    image: base64Image,
-                    status: 'LIVE',
-                    memo: memo
-                }),
-                signal: controller.signal
+            // Firestoreへ送信 (Base64で保存することでStorageコストを削減し、反映速度を最大化)
+            await setDoc(doc(db_fs, "live_streams", myCorp), {
+                corp: myCorp,
+                image: base64Image,
+                status: 'LIVE',
+                memo: memo,
+                timestamp: Date.now() // クライアント時刻で並び替えに使用
             });
 
             countRef.current += 1;

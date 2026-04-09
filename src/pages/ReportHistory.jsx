@@ -2,6 +2,8 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { getOutbox, deleteFromOutbox } from '../lib/db';
+import { db_fs } from '../lib/firebase';
+import { collection, query, orderBy, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 import { Trash2, MapPin, List, Map as MapIcon, Plus, Edit, Image as ImageIcon, Bell, BellOff, Video } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -116,103 +118,54 @@ export default function ReportHistory() {
 
     // ... loadReports ...
 
-    const loadReports = async () => {
-        setStatus('loading');
-        const localData = await getOutbox();
-
-        try {
-            console.log("Fetching from GAS...");
-            // Add cache busting timestamp
-            const response = await fetch(`${GAS_URL}?t=${new Date().getTime()}`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-            const text = await response.text();
-            let serverData;
-            try {
-                serverData = JSON.parse(text);
-
-                // Merge logic (Local Priority)
-                const mergedMap = new Map();
-
-                // Add server items first
-                if (Array.isArray(serverData) && serverData.length > 0) {
-                    serverData.forEach(item => {
-                        // Ensure ID is string and trimmed
-                        const sId = String(item.id).trim();
-                        mergedMap.set(sId, { ...item, id: sId });
-                    });
-
-                    // Always overwrite with local data (Optimistic UI) 
-                    localData.forEach(item => {
-                        const lId = String(item.id).trim();
-                        mergedMap.set(lId, { ...item, id: lId });
-                    });
-                } else {
-                    // Server returned empty or error - show ALL local items
-                    console.warn("Server returned 0 items - showing all local data");
-                    localData.forEach(item => {
-                        const lId = String(item.id).trim();
-                        mergedMap.set(lId, { ...item, id: lId });
-                    });
-                }
-
-                const mergedList = Array.from(mergedMap.values());
-
-                // Filter invalid items
-                const validReports = mergedList.filter(item => item && item.data);
-
-                // Sort by date (descending)
-                const sorted = validReports.sort((a, b) => {
-                    // Try reportDate first
-                    const dateA = a.data.reportDate ? new Date(a.data.reportDate).getTime() : 0;
-                    const dateB = b.data.reportDate ? new Date(b.data.reportDate).getTime() : 0;
-
-                    if (dateA > 0 && dateB > 0) return dateB - dateA;
-
-                    // Fallback to created_at
-                    return (b.created_at || 0) - (a.created_at || 0);
-                });
-
-                // Detect changes and play sound
-                detectChangesAndNotify(sorted);
-
-                setReports(sorted);
-                setStatus('success');
-            } catch (e) {
-                console.error("Failed to parse JSON. Response was:", text.slice(0, 500));
-                throw new Error("Invalid JSON response: " + text.slice(0, 100)); // Show beginning of text
-            }
-        } catch (error) {
-            console.error("Fetch error:", error);
-            // Even if server fails, show local data
-            if (localData.length > 0) {
-                // Fallback merge just local
-                const mergedMap = new Map();
-                localData.forEach(item => {
-                    const lId = String(item.id).trim();
-                    mergedMap.set(lId, { ...item, id: lId });
-                });
-                // Sort
-                const sorted = Array.from(mergedMap.values()).sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
-                setReports(sorted);
-                setStatus('success'); // Soft success (offline mode)
-            } else {
-                setStatus('error');
-            }
-        }
-    };
-
+    // 1. Initial Load & Real-time Subscription
     useEffect(() => {
-        loadReports();
+        setStatus('loading');
 
-        // Poll for updates every 30 seconds
-        const pollInterval = setInterval(() => {
-            if (document.visibilityState === 'visible') {
-                loadReports();
-            }
-        }, 30000);
+        // Create query for FireStore
+        const q = query(collection(db_fs, "reports"), orderBy("updated_at", "desc"));
 
-        return () => clearInterval(pollInterval);
+        // Subscribe to real-time updates
+        const unsubscribe = onSnapshot(q, async (snapshot) => {
+            const serverData = snapshot.docs.map(doc => ({
+                id: doc.id,
+                data: doc.data(),
+                source: 'server'
+            }));
+
+            const localData = await getOutbox();
+            
+            // Merge logic (Local Priority)
+            const mergedMap = new Map();
+
+            // Add server items
+            serverData.forEach(item => {
+                mergedMap.set(item.id, item);
+            });
+
+            // Always overwrite with local data (Optimistic UI) 
+            localData.forEach(item => {
+                mergedMap.set(item.id, { ...item, source: 'local' });
+            });
+
+            const mergedList = Array.from(mergedMap.values());
+            const sorted = mergedList.sort((a, b) => {
+                const dateA = a.data.reportDate ? new Date(a.data.reportDate).getTime() : 0;
+                const dateB = b.data.reportDate ? new Date(b.data.reportDate).getTime() : 0;
+                return dateB - dateA;
+            });
+
+            // Detect changes and play sound
+            detectChangesAndNotify(sorted);
+            
+            setReports(sorted);
+            setStatus('success');
+        }, (error) => {
+            console.error("Firestore Subscribe error:", error);
+            setStatus('error');
+        });
+
+        return () => unsubscribe();
     }, []);
 
     // Persist sound setting
@@ -281,15 +234,8 @@ export default function ReportHistory() {
             const shouldDeleteFromServer = target && (target.source === 'server' || target.status === 'synced');
 
             if (shouldDeleteFromServer) {
-                // Call GAS delete
-                const response = await fetch(GAS_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'delete', id: cleanId })
-                });
-
-                // Keep running to delete locally
+                // Call Firestore delete
+                await deleteDoc(doc(db_fs, "reports", cleanId));
             }
 
             // Always try to delete from local outbox just in case

@@ -9,6 +9,9 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { clsx } from 'clsx';
 import { saveDraft, getDraft, clearDraft, addToOutbox, updateStatus } from '../lib/db';
+import { db_fs, storage } from '../lib/firebase';
+import { ref, uploadString, getDownloadURL } from 'firebase/storage';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 // Fix for default marker icon in React Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -414,26 +417,43 @@ export default function ReportForm() {
             // 2. Try to sync immediately if online
             if (navigator.onLine) {
                 try {
-                    if (GAS_URL.includes('drive_link')) {
-                        console.warn('GAS URL not set. Skipping fetch.');
-                        alert('送信キューに保存しました (GAS URL未設定のためデモ動作)');
-                    } else {
-                        await fetch(GAS_URL, {
-                            method: 'POST',
-                            mode: 'no-cors', // Google Apps Script requires no-cors for simple POST
-                            headers: { 'Content-Type': 'application/json' },
-                            // Include the generated ID so server matches client
-                            body: JSON.stringify({ ...finalFormData, id: id })
-                        });
+                    // Firebase Upload Logic
+                    const reportId = id;
+                    const updatedPhotos = [];
 
-                        // Mark as synced
-                        if (id) {
-                            await updateStatus(id, 'synced');
+                    // 2a. Upload Photos to Firebase Storage
+                    if (finalFormData.photos && finalFormData.photos.length > 0) {
+                        for (let i = 0; i < finalFormData.photos.length; i++) {
+                            const photoStr = finalFormData.photos[i];
+                            // Only upload if it's base64 data
+                            if (photoStr.startsWith('data:')) {
+                                const photoRef = ref(storage, `photos/${reportId}/${i}.jpg`);
+                                await uploadString(photoRef, photoStr, 'data_url');
+                                const downloadURL = await getDownloadURL(photoRef);
+                                updatedPhotos.push(downloadURL);
+                            } else {
+                                // Already a URL (e.g. from existing photos in Edit mode)
+                                updatedPhotos.push(photoStr);
+                            }
                         }
-                        alert('サーバーへ送信しました！');
                     }
+
+                    // 2b. Save Report to Firestore
+                    const firestoreData = {
+                        ...finalFormData,
+                        photos: updatedPhotos,
+                        updated_at: serverTimestamp(),
+                    };
+
+                    await setDoc(doc(db_fs, "reports", reportId), firestoreData);
+
+                    // Mark as synced
+                    if (id) {
+                        await updateStatus(id, 'synced');
+                    }
+                    alert('サーバー（Firebase）へ送信しました！');
                 } catch (e) {
-                    console.error("Sync failed", e);
+                    console.error("Firebase Sync failed", e);
                     alert('送信に失敗しましたが、端末には保存されました。');
                 }
             } else {
