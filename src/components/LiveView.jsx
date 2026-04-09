@@ -233,10 +233,10 @@ export default function LiveView() {
                     {!isBroadcasting ? (
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest block ml-1">配信者情報</label>
+                                <label className="text-sm font-black text-gray-900 uppercase tracking-widest block ml-1">配信者情報</label>
                                 <div className="space-y-4">
                                     <select 
-                                        className="w-full h-14 border-2 border-gray-100 rounded-2xl bg-gray-50 px-4 text-gray-900 font-bold focus:border-blue-500 focus:bg-white transition-all outline-none text-base"
+                                        className="w-full h-14 border-2 border-gray-200 rounded-2xl bg-gray-50 px-4 text-gray-900 font-bold focus:border-blue-500 focus:bg-white transition-all outline-none text-base shadow-sm"
                                         value={myCorp} 
                                         onChange={e => setMyCorp(e.target.value)}
                                     >
@@ -244,8 +244,8 @@ export default function LiveView() {
                                         {corps.map(c => <option key={c} value={c}>{c}</option>)}
                                     </select>
                                     <textarea 
-                                        placeholder="活動メモ (例: 第3ポンプ放水開始)" 
-                                        className="w-full min-h-[100px] border-2 border-gray-100 rounded-2xl bg-gray-50 px-4 py-3 text-gray-900 font-bold focus:border-blue-500 focus:bg-white transition-all outline-none text-base"
+                                        placeholder="活動メモ (例: 車両通行できません)" 
+                                        className="w-full min-h-[100px] border-2 border-gray-200 rounded-2xl bg-gray-50 px-4 py-3 text-gray-900 font-bold focus:border-blue-500 focus:bg-white transition-all outline-none text-base shadow-sm"
                                         value={memo}
                                         onChange={e => setMemo(e.target.value)}
                                     />
@@ -264,7 +264,7 @@ export default function LiveView() {
                                 )}
                             </Button>
                             
-                            <p className="text-[10px] text-gray-400 text-center font-bold px-4 leading-relaxed">
+                            <p className="text-xs text-gray-800 text-center font-black px-4 leading-relaxed bg-yellow-50 py-3 rounded-xl border border-yellow-100 shadow-inner">
                                 ※3秒おきに最新画像を送信します。通信環境をご確認ください。<br/>配信中はカメラを閉じないでください。
                             </p>
                         </div>
