@@ -257,7 +257,14 @@ export default function ReportHistory() {
                         <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white shadow-lg">
                             < Bell size={18} className="animate-pulse" />
                         </div>
-                        <h1 className="text-xl font-extrabold tracking-tight text-gray-900">リアルタイム災害情報</h1>
+                        <div>
+                            <h1 className="text-xl font-black tracking-tighter text-gray-900 leading-none">リアルタイム災害情報</h1>
+                            <div className="mt-1">
+                                <span className="bg-red-50 text-red-600 text-[10px] font-black px-1.5 py-0.5 rounded border border-red-100 uppercase tracking-widest leading-none">
+                                    System v1.2.8
+                                </span>
+                            </div>
+                        </div>
                     </div>
                     <button
                         onClick={() => setSoundEnabled(!soundEnabled)}

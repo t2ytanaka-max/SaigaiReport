@@ -482,9 +482,16 @@ export default function ReportForm() {
 
     return (
         <div className="max-w-md mx-auto p-4 space-y-6 pb-24 bg-gray-50 min-h-screen">
-            <header className="border-b border-gray-200 pb-2 mb-4">
+            <header className="border-b border-gray-200 pb-3 mb-4">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-xl font-bold text-gray-800">災害状況を入力して下さい</h1>
+                    <div>
+                        <h1 className="text-xl font-black text-gray-800 leading-none">災害状況入力</h1>
+                        <div className="mt-1">
+                            <span className="bg-red-50 text-red-600 text-[10px] font-black px-1.5 py-0.5 rounded border border-red-100 uppercase tracking-widest leading-none">
+                                System v1.2.8
+                            </span>
+                        </div>
+                    </div>
                     <Link to="/">
                         <Button variant="outline" size="sm" className="text-blue-600 gap-1 h-9 px-3 bg-blue-50 border-blue-100 hover:bg-blue-100 font-bold shadow-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
