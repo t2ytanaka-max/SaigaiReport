@@ -787,7 +787,17 @@ export default function ReportForm() {
 
                 <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 z-10 shadow-lg">
                     <Button type="submit" className="w-full text-lg h-14 bg-red-600 hover:bg-red-700 shadow-md" size="lg">確認画面へ</Button>
-                </div>
+                {/* Footer with Version Indicator */}
+                <footer className="mt-8 mb-24 py-6 border-t border-gray-100 flex flex-col items-center gap-2">
+                    <div className="flex items-center gap-2 text-gray-300">
+                        <div className="w-6 h-px bg-gray-100"></div>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Fire Corps Report System</span>
+                        <div className="w-6 h-px bg-gray-100"></div>
+                    </div>
+                    <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
+                        <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.2.7</span>
+                    </div>
+                </footer>
             </form>
         </div>
     );

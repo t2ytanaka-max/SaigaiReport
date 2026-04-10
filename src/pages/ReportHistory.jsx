@@ -453,6 +453,17 @@ export default function ReportHistory() {
                     </div>
                 </div>
             )}
+            {/* Footer with Version Indicator */}
+            <footer className="mt-8 mb-24 py-8 border-t border-gray-100 flex flex-col items-center gap-2">
+                <div className="flex items-center gap-2 text-gray-300">
+                    <div className="w-6 h-px bg-gray-100"></div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Fire Corps Report System</span>
+                    <div className="w-6 h-px bg-gray-100"></div>
+                </div>
+                <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
+                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.2.7</span>
+                </div>
+            </footer>
         </div>
     );
 }
