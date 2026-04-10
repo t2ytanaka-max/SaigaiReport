@@ -261,7 +261,7 @@ export default function ReportHistory() {
                             <h1 className="text-xl font-black tracking-tighter text-gray-900 leading-none">リアルタイム災害情報</h1>
                             <div className="mt-1">
                                 <span className="bg-red-50 text-red-600 text-[10px] font-black px-1.5 py-0.5 rounded border border-red-100 uppercase tracking-widest leading-none">
-                                    System v1.2.8
+                                    System v1.2.9
                                 </span>
                             </div>
                         </div>
@@ -468,7 +468,7 @@ export default function ReportHistory() {
                     <div className="w-6 h-px bg-gray-100"></div>
                 </div>
                 <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
-                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.2.7</span>
+                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.2.9</span>
                 </div>
             </footer>
         </div>

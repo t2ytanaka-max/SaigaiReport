@@ -253,7 +253,7 @@ export default function LiveView() {
                             </div>
                             
                             <Button 
-                                className="w-full h-16 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl font-black text-lg shadow-xl shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50" 
+                                className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-lg shadow-xl shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50 border-none appearance-none" 
                                 onClick={startBroadcast} 
                                 disabled={isLoading}
                             >
