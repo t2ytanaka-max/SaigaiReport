@@ -508,7 +508,7 @@ export default function ReportForm() {
 
                 {/* Corp */}
                 <section className="bg-white p-4 rounded-lg shadow-sm">
-                    <label className="block text-sm font-bold text-gray-700 mb-2">所属分団</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">所属分団 <span className="text-red-600 text-xs ml-1">必須</span></label>
                     <select className="flex h-12 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600" {...register('corp', { required: true })}>
                         <option value="">選択してください</option>
                         <option value="1分団（久原）">1分団（久原）</option>
@@ -543,7 +543,7 @@ export default function ReportForm() {
 
                 {/* Category */}
                 <section className="bg-white p-4 rounded-lg shadow-sm">
-                    <label className="block text-sm font-bold text-gray-700 mb-2">災害内容</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">災害内容 <span className="text-red-600 text-xs ml-1">必須</span></label>
 
                     <button
                         type="button"
@@ -622,7 +622,7 @@ export default function ReportForm() {
 
                 {/* Location */}
                 <section className="bg-white p-4 rounded-lg shadow-sm">
-                    <label className="block text-sm font-bold text-gray-700 mb-2">位置情報</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">位置情報 <span className="text-red-600 text-xs ml-1">自動マーキング 手動変更も可能</span></label>
                     <div className="h-64 rounded-md border border-gray-300 overflow-hidden relative z-0">
                         <MapContainer center={[35.6895, 139.6917]} zoom={13} style={{ height: '100%', width: '100%' }}>
                             <TileLayer
@@ -714,13 +714,13 @@ export default function ReportForm() {
 
                 {/* Memo */}
                 <section className="bg-white p-4 rounded-lg shadow-sm">
-                    <label className="block text-sm font-bold text-gray-700 mb-2">追加情報記入</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">追加情報記入 <span className="text-blue-600 text-xs ml-1">任意</span></label>
                     <textarea className="flex w-full min-h-[100px] rounded-md border border-gray-300 bg-white px-3 py-2 text-base placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600" {...register('memo')} placeholder="被害状況など"></textarea>
                 </section>
 
                 {/* Status */}
                 <section className="bg-white p-4 rounded-lg shadow-sm">
-                    <label className="block text-sm font-bold text-gray-700 mb-2">活動状況</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">活動状況 <span className="text-red-600 text-xs ml-1">必須</span></label>
 
                     <button
                         type="button"
