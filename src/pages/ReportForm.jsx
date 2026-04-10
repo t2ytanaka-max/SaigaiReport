@@ -455,9 +455,9 @@ export default function ReportForm() {
 
                     await setDoc(doc(db_fs, "reports", reportId), firestoreData);
 
-                    // Mark as synced
+                    // Mark as synced by deleting from temporary local outbox
                     if (id) {
-                        await updateStatus(id, 'synced');
+                        await deleteFromOutbox(id);
                     }
                     alert('サーバー（Firebase）へ送信が完了しました！');
                 } catch (e) {

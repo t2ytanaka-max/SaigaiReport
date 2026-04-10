@@ -99,8 +99,22 @@ export default function ReportHistory() {
 
     const refreshData = async (serverData = []) => {
         try {
-            const localData = await getOutbox();
+            const rawLocalData = await getOutbox();
+            
+            // Cleanup: Delete any local items that are already marked as 'synced'
+            // This prevents old leftovers from interfering with the server truth.
+            const syncedIds = rawLocalData.filter(item => item.status === 'synced').map(item => item.id);
+            if (syncedIds.length > 0) {
+                console.log("Cleaning up synced local items:", syncedIds);
+                await Promise.all(syncedIds.map(id => deleteFromOutbox(id)));
+            }
+
+            // Only show 'pending' items from local outbox
+            const localData = rawLocalData.filter(item => item.status !== 'synced');
+
             const mergedMap = new Map();
+            // Merge strategy: Local data (pending) overwrites server data ONLY if they have the same ID
+            // BUT, once synced, the item is deleted from local, so server data wins.
             serverData.forEach(item => {
                 mergedMap.set(item.id, item);
             });
