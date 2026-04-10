@@ -486,11 +486,6 @@ export default function ReportForm() {
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-xl font-black text-gray-800 leading-none">災害状況入力</h1>
-                        <div className="mt-1">
-                            <span className="bg-red-50 text-red-600 text-[10px] font-black px-1.5 py-0.5 rounded border border-red-100 uppercase tracking-widest leading-none">
-                                System v1.2.9
-                            </span>
-                        </div>
                     </div>
                     <Link to="/">
                         <Button variant="outline" size="sm" className="text-blue-600 gap-1 h-9 px-3 bg-blue-50 border-blue-100 hover:bg-blue-100 font-bold shadow-sm">

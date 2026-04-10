@@ -259,11 +259,6 @@ export default function ReportHistory() {
                         </div>
                         <div>
                             <h1 className="text-xl font-black tracking-tighter text-gray-900 leading-none">リアルタイム災害情報</h1>
-                            <div className="mt-1">
-                                <span className="bg-red-50 text-red-600 text-[10px] font-black px-1.5 py-0.5 rounded border border-red-100 uppercase tracking-widest leading-none">
-                                    System v1.2.9
-                                </span>
-                            </div>
                         </div>
                     </div>
                     <button
