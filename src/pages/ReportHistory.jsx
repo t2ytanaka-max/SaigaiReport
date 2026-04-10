@@ -316,77 +316,99 @@ export default function ReportHistory() {
 
                                 return (
                                     <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all active:scale-[0.99] hover:border-blue-100">
-                                        {/* Status & Date Header */}
-                                        <div className="flex justify-between items-center px-3 py-2 bg-gray-50/50 border-b border-gray-50">
-                                            <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${statusColors[report?.status] || 'bg-gray-200 text-gray-700'}`}>
-                                                {report?.status}
-                                            </span>
-                                            <div className="flex items-center text-gray-900 text-xs font-black gap-1">
-                                                <Clock size={12} className="text-gray-400" /> {dateStr}
+                                        {/* Header Bar: Corp & Date (High Visibility) */}
+                                        <div className={`px-4 py-2.5 flex justify-between items-center ${statusColors[report?.status] || 'bg-gray-200'} shadow-md`}>
+                                            <div className="flex items-center gap-2">
+                                                <div className="bg-white/20 p-1.5 rounded-lg border border-white/30">
+                                                    <MapPin size={18} className="text-white" />
+                                                </div>
+                                                <span className="text-lg font-black text-white tracking-tighter drop-shadow-sm">
+                                                    {report?.corp}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-1.5 bg-black/20 px-3 py-1.5 rounded-xl border border-white/20">
+                                                <Clock size={16} className="text-white/90" />
+                                                <span className="text-sm font-black text-white whitespace-nowrap">
+                                                    {dateStr}
+                                                </span>
                                             </div>
                                         </div>
 
-                                        <div className="p-3 flex gap-3">
-                                            {/* Photo (Left) - Compact but consistent */}
-                                            <div className="shrink-0">
+                                        {/* Main Content Area */}
+                                        <div className="p-5 flex flex-col sm:flex-row gap-5">
+                                            {/* Photo Section (Large & Clear) */}
+                                            <div className="shrink-0 flex justify-center">
                                                 {report?.photos?.[0] ? (
-                                                    <RemoteImage
-                                                        src={report.photos[0]}
-                                                        alt="現場写真"
-                                                        className="w-20 h-24 object-cover rounded-xl border border-gray-100 shadow-sm cursor-zoom-in"
-                                                        onClick={() => setSelectedImage(report.photos[0])}
-                                                    />
+                                                    <div className="relative group">
+                                                        <RemoteImage
+                                                            src={report.photos[0]}
+                                                            alt="現場写真"
+                                                            className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-2xl border-4 border-gray-100 shadow-xl cursor-zoom-in transition-transform group-hover:scale-[1.02]"
+                                                            onClick={() => setSelectedImage(report.photos[0])}
+                                                        />
+                                                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <span className="text-[10px] text-white font-bold block text-center">タップで拡大</span>
+                                                        </div>
+                                                    </div>
                                                 ) : (
-                                                    <div className="w-20 h-24 bg-gray-50 rounded-xl border border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-300">
-                                                        <ImageIcon size={24} />
-                                                        <span className="text-[8px] font-bold mt-1 uppercase">No Photo</span>
+                                                    <div className="w-32 h-32 sm:w-40 sm:h-40 bg-gray-50 rounded-2xl border-4 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-300">
+                                                        <Video size={40} className="mb-2 opacity-50" />
+                                                        <span className="text-xs font-black uppercase tracking-widest">No Image</span>
                                                     </div>
                                                 )}
                                             </div>
 
-                                            {/* Content (Right) - Dynamic height, Larger text */}
-                                            <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                                                <div>
-                                                    <div className="text-[11px] font-black text-blue-700 truncate mb-0.5 tracking-tight">{report?.corp}</div>
-                                                    <h2 className="text-xl font-extrabold text-gray-900 leading-tight mb-1">{report?.category}</h2>
+                                            {/* Text Content (Extra Large) */}
+                                            <div className="flex-1 min-w-0 flex flex-col">
+                                                <div className="mb-4">
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <div className="w-2 h-6 bg-red-600 rounded-full"></div>
+                                                        <h2 className="text-2xl font-black text-gray-900 leading-none tracking-tight">
+                                                            {report?.category}
+                                                        </h2>
+                                                    </div>
                                                     {report?.memo && (
-                                                        <p className="text-sm text-gray-700 font-bold leading-relaxed whitespace-pre-wrap">
-                                                            {report.memo}
-                                                        </p>
+                                                        <div className="bg-gray-50 p-4 rounded-2xl border-2 border-gray-100/50">
+                                                            <p className="text-lg text-gray-800 font-bold leading-relaxed whitespace-pre-wrap">
+                                                                {report.memo}
+                                                            </p>
+                                                        </div>
                                                     )}
                                                 </div>
 
-                                                <div className="flex items-center justify-between mt-3">
-                                                    <div className="flex gap-2">
+                                                {/* Action Footer (Large & Tactile) */}
+                                                <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                                                    <div className="flex gap-4">
                                                         <button 
                                                             onClick={() => handleDelete(item.id)} 
-                                                            className="w-9 h-9 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm"
+                                                            className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center hover:bg-red-600 hover:text-white transition-all border-2 border-red-100 shadow-sm active:scale-95"
                                                             title="削除"
                                                         >
-                                                            <Trash2 size={18} strokeWidth={2.5} />
+                                                            <Trash2 size={28} strokeWidth={2.5} />
                                                         </button>
                                                         <Link 
                                                             to="/report" 
                                                             state={{ reportData: { ...item.data, id: item.id } }} 
-                                                            className="w-9 h-9 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm"
-                                                            title="更新"
+                                                            className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all border-2 border-blue-100 shadow-sm active:scale-95"
+                                                            title="内容を修正"
                                                         >
-                                                            <Edit size={18} strokeWidth={2.5} />
+                                                            <Edit size={28} strokeWidth={2.5} />
                                                         </Link>
                                                         {report?.location && (
                                                             <a 
                                                                 href={`https://www.google.com/maps/search/?api=1&query=${report.location.lat},${report.location.lng}`} 
                                                                 target="_blank" 
                                                                 rel="noreferrer" 
-                                                                className="w-9 h-9 bg-green-50 text-green-700 rounded-lg flex items-center justify-center hover:bg-green-700 hover:text-white transition-all border border-green-100 shadow-sm"
-                                                                title="地図"
+                                                                className="w-14 h-14 bg-green-50 text-green-700 rounded-2xl flex items-center justify-center hover:bg-green-700 hover:text-white transition-all border-2 border-green-100 shadow-sm active:scale-95"
+                                                                title="地図で場所を確認"
                                                             >
-                                                                <MapPin size={18} strokeWidth={2.5} />
+                                                                <MapIcon size={28} strokeWidth={2.5} />
                                                             </a>
                                                         )}
                                                     </div>
-                                                    <div className="flex items-center text-gray-300">
-                                                        <ChevronRight size={20} />
+                                                    <div className="hidden sm:flex items-center gap-1 px-4 py-2 bg-gray-100 rounded-full text-xs font-black text-gray-400">
+                                                        <span>詳細表示中</span>
+                                                        <ChevronRight size={14} />
                                                     </div>
                                                 </div>
                                             </div>
