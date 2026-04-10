@@ -8,7 +8,7 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { clsx } from 'clsx';
-import { saveDraft, getDraft, clearDraft, addToOutbox, updateStatus } from '../lib/db';
+import { saveDraft, getDraft, clearDraft, addToOutbox, updateStatus, deleteFromOutbox } from '../lib/db';
 import { db_fs, storage } from '../lib/firebase';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
