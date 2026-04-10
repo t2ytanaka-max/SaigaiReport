@@ -316,100 +316,80 @@ export default function ReportHistory() {
 
                                 return (
                                     <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all active:scale-[0.99] hover:border-blue-100">
-                                        {/* Header Bar: Corp & Date (High Visibility) */}
-                                        <div className={`px-4 py-2.5 flex justify-between items-center ${statusColors[report?.status] || 'bg-gray-200'} shadow-md`}>
-                                            <div className="flex items-center gap-2">
-                                                <div className="bg-white/20 p-1.5 rounded-lg border border-white/30">
-                                                    <MapPin size={18} className="text-white" />
-                                                </div>
-                                                <span className="text-lg font-black text-white tracking-tighter drop-shadow-sm">
-                                                    {report?.corp}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-1.5 bg-black/20 px-3 py-1.5 rounded-xl border border-white/20">
-                                                <Clock size={16} className="text-white/90" />
-                                                <span className="text-sm font-black text-white whitespace-nowrap">
-                                                    {dateStr}
-                                                </span>
+                                        {/* Status & Date Header (Restored but Larger) */}
+                                        <div className="flex justify-between items-center px-4 py-2 bg-gray-50/80 border-b border-gray-100">
+                                            <span className={`px-3 py-1 rounded-md text-xs font-black shadow-sm ${statusColors[report?.status] || 'bg-gray-200 text-gray-700'}`}>
+                                                {report?.status}
+                                            </span>
+                                            <div className="flex items-center text-gray-900 text-sm font-black gap-1.5">
+                                                <Clock size={14} className="text-gray-400" /> {dateStr}
                                             </div>
                                         </div>
 
-                                        {/* Main Content Area */}
-                                        <div className="p-5 flex flex-col sm:flex-row gap-5">
-                                            {/* Photo Section (Large & Clear) */}
-                                            <div className="shrink-0 flex justify-center">
+                                        <div className="p-4 flex gap-4">
+                                            {/* Photo (Left) - Restored size */}
+                                            <div className="shrink-0">
                                                 {report?.photos?.[0] ? (
-                                                    <div className="relative group">
-                                                        <RemoteImage
-                                                            src={report.photos[0]}
-                                                            alt="現場写真"
-                                                            className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-2xl border-4 border-gray-100 shadow-xl cursor-zoom-in transition-transform group-hover:scale-[1.02]"
-                                                            onClick={() => setSelectedImage(report.photos[0])}
-                                                        />
-                                                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <span className="text-[10px] text-white font-bold block text-center">タップで拡大</span>
-                                                        </div>
-                                                    </div>
+                                                    <RemoteImage
+                                                        src={report.photos[0]}
+                                                        alt="現場写真"
+                                                        className="w-24 h-28 object-cover rounded-2xl border border-gray-100 shadow-sm cursor-zoom-in"
+                                                        onClick={() => setSelectedImage(report.photos[0])}
+                                                    />
                                                 ) : (
-                                                    <div className="w-32 h-32 sm:w-40 sm:h-40 bg-gray-50 rounded-2xl border-4 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-300">
-                                                        <Video size={40} className="mb-2 opacity-50" />
-                                                        <span className="text-xs font-black uppercase tracking-widest">No Image</span>
+                                                    <div className="w-24 h-28 bg-gray-50 rounded-2xl border border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-300">
+                                                        <ImageIcon size={28} />
+                                                        <span className="text-[10px] font-bold mt-1 uppercase">No Photo</span>
                                                     </div>
                                                 )}
                                             </div>
 
-                                            {/* Text Content (Extra Large) */}
-                                            <div className="flex-1 min-w-0 flex flex-col">
-                                                <div className="mb-4">
-                                                    <div className="flex items-center gap-2 mb-2">
-                                                        <div className="w-2 h-6 bg-red-600 rounded-full"></div>
-                                                        <h2 className="text-2xl font-black text-gray-900 leading-none tracking-tight">
-                                                            {report?.category}
-                                                        </h2>
+                                            {/* Content (Right) - Larger Corp & Category */}
+                                            <div className="flex-1 min-w-0 flex flex-col justify-between pt-1">
+                                                <div>
+                                                    <div className="text-sm font-black text-blue-700 mb-1 flex items-center gap-1">
+                                                        <MapPin size={14} /> {report?.corp}
                                                     </div>
+                                                    <h2 className="text-xl font-black text-gray-900 leading-tight mb-2">
+                                                        {report?.category}
+                                                    </h2>
                                                     {report?.memo && (
-                                                        <div className="bg-gray-50 p-4 rounded-2xl border-2 border-gray-100/50">
-                                                            <p className="text-lg text-gray-800 font-bold leading-relaxed whitespace-pre-wrap">
-                                                                {report.memo}
-                                                            </p>
-                                                        </div>
+                                                        <p className="text-sm text-gray-600 font-bold leading-relaxed whitespace-pre-wrap">
+                                                            {report.memo}
+                                                        </p>
                                                     )}
                                                 </div>
 
-                                                {/* Action Footer (Large & Tactile) */}
-                                                <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
-                                                    <div className="flex gap-4">
+                                                <div className="flex items-center justify-between mt-4">
+                                                    <div className="flex gap-2">
                                                         <button 
                                                             onClick={() => handleDelete(item.id)} 
-                                                            className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center hover:bg-red-600 hover:text-white transition-all border-2 border-red-100 shadow-sm active:scale-95"
+                                                            className="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm"
                                                             title="削除"
                                                         >
-                                                            <Trash2 size={28} strokeWidth={2.5} />
+                                                            <Trash2 size={20} strokeWidth={2.5} />
                                                         </button>
                                                         <Link 
                                                             to="/report" 
                                                             state={{ reportData: { ...item.data, id: item.id } }} 
-                                                            className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all border-2 border-blue-100 shadow-sm active:scale-95"
-                                                            title="内容を修正"
+                                                            className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm"
+                                                            title="更新"
                                                         >
-                                                            <Edit size={28} strokeWidth={2.5} />
+                                                            <Edit size={20} strokeWidth={2.5} />
                                                         </Link>
                                                         {report?.location && (
                                                             <a 
                                                                 href={`https://www.google.com/maps/search/?api=1&query=${report.location.lat},${report.location.lng}`} 
                                                                 target="_blank" 
                                                                 rel="noreferrer" 
-                                                                className="w-14 h-14 bg-green-50 text-green-700 rounded-2xl flex items-center justify-center hover:bg-green-700 hover:text-white transition-all border-2 border-green-100 shadow-sm active:scale-95"
-                                                                title="地図で場所を確認"
+                                                                className="w-10 h-10 bg-green-50 text-green-700 rounded-xl flex items-center justify-center hover:bg-green-700 hover:text-white transition-all border border-green-100 shadow-sm"
+                                                                title="地図"
                                                             >
-                                                                <MapIcon size={28} strokeWidth={2.5} />
+                                                                <MapPin size={20} strokeWidth={2.5} />
                                                             </a>
                                                         )}
                                                     </div>
-                                                    <div className="hidden sm:flex items-center gap-1 px-4 py-2 bg-gray-100 rounded-full text-xs font-black text-gray-400">
-                                                        <span>詳細表示中</span>
-                                                        <ChevronRight size={14} />
-                                                    </div>
+                                                    <ChevronRight size={22} className="text-gray-300" />
                                                 </div>
                                             </div>
                                         </div>
