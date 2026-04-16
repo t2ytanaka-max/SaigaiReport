@@ -450,8 +450,7 @@ export default function ReportForm() {
                         ...finalCleanData,
                         photos: updatedPhotos,
                         timestamp: Date.now(),
-                        deviceId: getMyDeviceId()
-                    };
+                        deviceId: getMyDeviceId(),
                         updated_at: serverTimestamp(),
                     };
 
