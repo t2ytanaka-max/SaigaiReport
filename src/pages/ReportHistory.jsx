@@ -92,6 +92,14 @@ export default function ReportHistory() {
     const [selectedImage, setSelectedImage] = useState(null);
     const previousReportIds = useRef(new Set());
     const isFirstLoad = useRef(true);
+    const [isAudioActive, setIsAudioActive] = useState(false);
+
+    // 音声状態の変更をリッスン
+    useEffect(() => {
+        const handleStatus = (e) => setIsAudioActive(e.detail.active);
+        window.addEventListener('saigai:audio-status', handleStatus);
+        return () => window.removeEventListener('saigai:audio-status', handleStatus);
+    }, []);
 
     const refreshData = async (serverData = []) => {
         try {
@@ -238,9 +246,18 @@ export default function ReportHistory() {
                     </div>
                     <button
                         onClick={() => window.dispatchEvent(new CustomEvent('saigai:open-settings'))}
-                        className="p-2.5 rounded-xl transition-all bg-gray-50 text-blue-600 shadow-sm border border-blue-50 hover:bg-white"
+                        className={`p-2.5 rounded-xl transition-all relative border ${
+                            isAudioActive 
+                            ? 'bg-blue-50 text-blue-600 border-blue-100 shadow-sm' 
+                            : 'bg-amber-50 text-amber-500 border-amber-200 shadow-lg animate-swing'
+                        } hover:bg-white`}
                     >
-                        <Bell size={20} />
+                        <Bell size={20} fill={isAudioActive ? 'currentColor' : 'none'} className={isAudioActive ? '' : 'animate-pulse'} />
+                        {!isAudioActive && (
+                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white animate-bounce shadow-lg">
+                                !
+                            </div>
+                        )}
                     </button>
                 </div>
 
@@ -438,7 +455,7 @@ export default function ReportHistory() {
                     <div className="w-6 h-px bg-gray-100"></div>
                 </div>
                 <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
-                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.3.8</span>
+                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.3.9</span>
                 </div>
             </footer>
         </div>

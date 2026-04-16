@@ -168,6 +168,8 @@ export default function NotificationManager() {
         const audio = new Audio(SOUND_URLS[settings.soundType]);
         audio.volume = 0.1;
         audio.play().catch(() => {});
+        // 外部（ヘッダー）に音声が有効になったことを通知
+        window.dispatchEvent(new CustomEvent('saigai:audio-status', { detail: { active: true } }));
     };
 
     return (
