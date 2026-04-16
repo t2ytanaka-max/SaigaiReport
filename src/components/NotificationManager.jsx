@@ -13,6 +13,7 @@ const SOUND_URLS = {
 export default function NotificationManager() {
     const [notification, setNotification] = useState(null);
     const [settings, setSettings] = useState(getNotificationSettings());
+    const [showSettings, setShowSettings] = useState(false);
     const [isAudioInitialized, setIsAudioInitialized] = useState(false);
     
     // 外部（ヘッダーのボタンなど）から設定パネルを開くためのイベントリスナー
