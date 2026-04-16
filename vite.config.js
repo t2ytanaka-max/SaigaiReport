@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        id: '/saigai-report-v1-3-5',
-        name: 'Live大村市消防団 v1.3.5',
+        id: '/saigai-report-v1-3-6',
+        name: 'Live大村市消防団 v1.3.6',
         short_name: 'Live大村市消防団',
         description: '消防団向け災害報告アプリ',
         theme_color: '#ef4444',
