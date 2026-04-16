@@ -159,9 +159,6 @@ export default function ReportHistory() {
         }
     }, []);
 
-    useEffect(() => {
-        localStorage.setItem('notificationSoundEnabled', soundEnabled.toString());
-    }, [soundEnabled]);
 
     const detectChangesAndNotify = (newReports) => {
         if (isFirstLoad.current) {
@@ -171,30 +168,12 @@ export default function ReportHistory() {
         }
         const currentIds = new Set(newReports.map(r => r.id));
         const hasNewReports = newReports.some(r => !previousReportIds.current.has(r.id));
-        if (hasNewReports && soundEnabled) {
-            playNotificationSound();
+        if (hasNewReports) {
+            // 通知は NotificationManager が行います
         }
         previousReportIds.current = currentIds;
     };
 
-    const playNotificationSound = () => {
-        try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            oscillator.frequency.value = 800;
-            gainNode.gain.value = 0.3;
-            oscillator.start(audioContext.currentTime);
-            oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.1);
-            oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.2);
-            oscillator.stop(audioContext.currentTime + 0.4);
-            setTimeout(() => audioContext.close(), 500);
-        } catch (e) {
-            console.error(e);
-        }
-    };
 
     const handleDelete = async (id) => {
         if (!window.confirm('この報告を削除してもよろしいですか？\n（サーバーからも削除されます）')) return;
@@ -251,7 +230,7 @@ export default function ReportHistory() {
                 <div className="flex justify-between items-center mb-3">
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white shadow-lg">
-                            < Bell size={18} className="animate-pulse" />
+                            <Bell size={18} className="animate-pulse" />
                         </div>
                         <div>
                             <h1 className="text-xl font-black tracking-tighter text-gray-900 leading-none">リアルタイム災害情報</h1>
