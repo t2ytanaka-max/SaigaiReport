@@ -9,6 +9,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { clsx } from 'clsx';
 import { saveDraft, getDraft, clearDraft, addToOutbox, updateStatus, deleteFromOutbox } from '../lib/db';
+import { getMyDeviceId } from '../lib/notifications';
 import { db_fs, storage } from '../lib/firebase';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -448,6 +449,9 @@ export default function ReportForm() {
                     const firestoreData = {
                         ...finalCleanData,
                         photos: updatedPhotos,
+                        timestamp: Date.now(),
+                        deviceId: getMyDeviceId()
+                    };
                         updated_at: serverTimestamp(),
                     };
 
@@ -799,7 +803,7 @@ export default function ReportForm() {
                         <div className="w-6 h-px bg-gray-100"></div>
                     </div>
                     <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
-                        <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.3.0</span>
+                        <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.3.5</span>
                     </div>
                 </footer>
             </form>

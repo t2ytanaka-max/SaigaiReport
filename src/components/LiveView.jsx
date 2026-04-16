@@ -3,6 +3,7 @@ import { Button } from './ui/Button';
 import { db_fs } from '../lib/firebase';
 import { collection, query, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { Video, Camera, StopCircle, Eye, RefreshCw, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { getMyDeviceId } from '../lib/notifications';
 
 const corps = [
     '1分団（久原）', '1分団（前船津）', '2分団', '3分団', '4分団（武部）', '4分団（大多武）',
@@ -150,7 +151,8 @@ export default function LiveView() {
                 image: base64Image,
                 status: 'LIVE',
                 memo: memo,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                deviceId: getMyDeviceId()
             });
 
             countRef.current += 1;
