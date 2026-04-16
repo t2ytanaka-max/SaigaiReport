@@ -25,7 +25,15 @@ export default function NotificationManager() {
     
     const myId = getMyDeviceId();
     const startTimeRef = useRef(Date.now());
-    const processedIdsRef = useRef(new Set()); // 重複通知防止用
+    const processedIdsRef = useRef(new Set());
+    const audioRef = useRef(null);
+
+    // Audio オブジェクトの初期化（一度だけ）
+    useEffect(() => {
+        if (!audioRef.current) {
+            audioRef.current = new Audio();
+        }
+    }, []);
 
     // 設定変更の保存
     const updateSettings = (newSettings) => {
@@ -34,16 +42,34 @@ export default function NotificationManager() {
         saveNotificationSettings(merged);
     };
 
-    // 音声再生
-    const playNotificationSound = () => {
-        if (!settings.enabled || !isAudioInitialized) return;
+    // 音声再生ロジックの強化
+    const playNotificationSound = (isTest = false) => {
+        if (!isTest && !settings.enabled) return;
+        if (!isAudioInitialized) {
+            console.warn("Audio not initialized yet. User must click 'Enable Audio'.");
+            return;
+        }
         
         try {
-            const audio = new Audio(SOUND_URLS[settings.soundType] || SOUND_URLS.default);
-            audio.volume = settings.volume;
-            audio.play().catch(e => console.error("Audio play failed:", e));
+            if (audioRef.current) {
+                // 再生中の場合は停止
+                audioRef.current.pause();
+                audioRef.current.currentTime = 0;
+                
+                audioRef.current.src = SOUND_URLS[settings.soundType] || SOUND_URLS.default;
+                audioRef.current.volume = settings.volume || 0.8;
+                
+                const playPromise = audioRef.current.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => {
+                        console.error("Audio play failed (maybe browser restriction):", e);
+                        // 失敗した場合は初期化フラグを戻して再入力を促す（安全策）
+                        if (!isTest) setIsAudioInitialized(false);
+                    });
+                }
+            }
         } catch (e) {
-            console.error("Audio instance failed:", e);
+            console.error("Critical error in playNotificationSound:", e);
         }
     };
 
@@ -194,17 +220,43 @@ export default function NotificationManager() {
                                     ))}
                                 </div>
                             </div>
+                            <div className="space-y-2 pt-2 border-t border-gray-50">
+                                <div className="flex items-center justify-between mb-1">
+                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">音量</span>
+                                    <span className="text-[10px] font-bold text-blue-600">{Math.round(settings.volume * 100)}%</span>
+                                </div>
+                                <input 
+                                    type="range" 
+                                    min="0" max="1" step="0.1" 
+                                    value={settings.volume} 
+                                    onChange={(e) => updateSettings({ volume: parseFloat(e.target.value) })}
+                                    className="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                />
+                            </div>
                             
                             {!isAudioInitialized ? (
                                 <button 
                                     onClick={initializeAudio}
-                                    className="w-full bg-blue-600 text-white py-3 rounded-xl font-black text-xs shadow-lg shadow-blue-200 animate-pulse hover:animate-none transition-all"
+                                    className="w-full bg-blue-600 text-white py-3 rounded-xl font-black text-xs shadow-lg shadow-blue-200 animate-pulse hover:animate-none transition-all flex items-center justify-center gap-2"
                                 >
+                                    <Volume2 size={16} />
                                     音声を有効にする
                                 </button>
                             ) : (
-                                <div className="pt-2 border-t border-gray-50">
-                                    <p className="text-[10px] text-gray-400 font-bold text-center">音声は有効です</p>
+                                <div className="space-y-3">
+                                    <button 
+                                        onClick={() => playNotificationSound(true)}
+                                        className="w-full bg-gray-50 text-gray-700 py-3 rounded-xl font-black text-xs border border-gray-100 hover:bg-white hover:border-blue-200 transition-all flex items-center justify-center gap-2"
+                                    >
+                                        <Radio size={14} className="text-blue-500" />
+                                        テスト再生
+                                    </button>
+                                    <div className="pt-1 border-t border-gray-50">
+                                        <p className="text-[10px] text-green-600 font-bold text-center flex items-center justify-center gap-1">
+                                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping" />
+                                            音声は有効です
+                                        </p>
+                                    </div>
                                 </div>
                             )}
                         </div>
