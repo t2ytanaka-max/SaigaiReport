@@ -27,6 +27,14 @@ export default function NotificationManager() {
     const startTimeRef = useRef(Date.now());
     const processedIdsRef = useRef(new Set());
     const audioRef = useRef(null);
+    
+    // 最新の設定状態を常に参照できるように Ref を導入
+    const settingsRef = useRef(settings);
+    const isAudioInitializedRef = useRef(isAudioInitialized);
+
+    // ステートが更新されたら Ref も更新する
+    useEffect(() => { settingsRef.current = settings; }, [settings]);
+    useEffect(() => { isAudioInitializedRef.current = isAudioInitialized; }, [isAudioInitialized]);
 
     // Audio オブジェクトの初期化（一度だけ）
     useEffect(() => {
@@ -42,10 +50,13 @@ export default function NotificationManager() {
         saveNotificationSettings(merged);
     };
 
-    // 音声再生ロジックの強化
+    // 音声再生ロジックの強化（最新の Ref を参照）
     const playNotificationSound = (isTest = false) => {
-        if (!isTest && !settings.enabled) return;
-        if (!isAudioInitialized) {
+        const currentSettings = settingsRef.current;
+        const currentIsAudioInitialized = isAudioInitializedRef.current;
+
+        if (!isTest && !currentSettings.enabled) return;
+        if (!currentIsAudioInitialized) {
             console.warn("Audio not initialized yet. User must click 'Enable Audio'.");
             return;
         }
@@ -56,8 +67,8 @@ export default function NotificationManager() {
                 audioRef.current.pause();
                 audioRef.current.currentTime = 0;
                 
-                audioRef.current.src = SOUND_URLS[settings.soundType] || SOUND_URLS.default;
-                audioRef.current.volume = settings.volume || 0.8;
+                audioRef.current.src = SOUND_URLS[currentSettings.soundType] || SOUND_URLS.default;
+                audioRef.current.volume = currentSettings.volume || 0.8;
                 
                 const playPromise = audioRef.current.play();
                 if (playPromise !== undefined) {
