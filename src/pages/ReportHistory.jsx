@@ -90,10 +90,6 @@ export default function ReportHistory() {
     const [status, setStatus] = useState('loading');
     const [viewMode, setViewMode] = useState('list');
     const [selectedImage, setSelectedImage] = useState(null);
-    const [soundEnabled, setSoundEnabled] = useState(() => {
-        const saved = localStorage.getItem('notificationSoundEnabled');
-        return saved === null ? true : saved === 'true';
-    });
     const previousReportIds = useRef(new Set());
     const isFirstLoad = useRef(true);
 
@@ -262,10 +258,10 @@ export default function ReportHistory() {
                         </div>
                     </div>
                     <button
-                        onClick={() => setSoundEnabled(!soundEnabled)}
-                        className={`p-2.5 rounded-xl transition-all ${soundEnabled ? 'bg-blue-50 text-blue-600 shadow-inner' : 'bg-gray-100 text-gray-400 opacity-60'}`}
+                        onClick={() => window.dispatchEvent(new CustomEvent('saigai:open-settings'))}
+                        className="p-2.5 rounded-xl transition-all bg-gray-50 text-blue-600 shadow-sm border border-blue-50 hover:bg-white"
                     >
-                        {soundEnabled ? <Bell size={20} /> : <BellOff size={20} />}
+                        <Bell size={20} />
                     </button>
                 </div>
 

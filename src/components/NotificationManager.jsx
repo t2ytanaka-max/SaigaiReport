@@ -13,8 +13,14 @@ const SOUND_URLS = {
 export default function NotificationManager() {
     const [notification, setNotification] = useState(null);
     const [settings, setSettings] = useState(getNotificationSettings());
-    const [showSettings, setShowSettings] = useState(false);
     const [isAudioInitialized, setIsAudioInitialized] = useState(false);
+    
+    // 外部（ヘッダーのボタンなど）から設定パネルを開くためのイベントリスナー
+    useEffect(() => {
+        const handleOpenSettings = () => setShowSettings(prev => !prev);
+        window.addEventListener('saigai:open-settings', handleOpenSettings);
+        return () => window.removeEventListener('saigai:open-settings', handleOpenSettings);
+    }, []);
     
     const myId = getMyDeviceId();
     const startTimeRef = useRef(Date.now());
@@ -152,13 +158,13 @@ export default function NotificationManager() {
                 </div>
             )}
 
-            {/* 設定ボタン */}
-            <div className="fixed bottom-24 right-4 z-[9998] flex flex-col items-end gap-3">
-                {showSettings && (
-                    <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-5 w-64 mb-2 animate-in fade-in zoom-in-95 duration-200">
+            {/* 設定パネル（ヘッダーから呼び出される） */}
+            {showSettings && (
+                <div className="fixed top-20 right-4 z-[9998] animate-in fade-in zoom-in-95 duration-200">
+                    <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-5 w-64 ring-4 ring-black/5">
                         <div className="flex items-center justify-between mb-4">
                             <h5 className="font-black text-sm text-gray-900 tracking-widest uppercase">通知設定</h5>
-                            <button onClick={() => setShowSettings(false)}><X size={16} className="text-gray-400" /></button>
+                            <button onClick={() => setShowSettings(false)} className="p-1 hover:bg-gray-50 rounded-full"><X size={16} className="text-gray-400" /></button>
                         </div>
 
                         <div className="space-y-5">
@@ -188,29 +194,22 @@ export default function NotificationManager() {
                                 </div>
                             </div>
                             
-                            {!isAudioInitialized && (
+                            {!isAudioInitialized ? (
                                 <button 
                                     onClick={initializeAudio}
                                     className="w-full bg-blue-600 text-white py-3 rounded-xl font-black text-xs shadow-lg shadow-blue-200 animate-pulse hover:animate-none transition-all"
                                 >
                                     音声を有効にする
                                 </button>
+                            ) : (
+                                <div className="pt-2 border-t border-gray-50">
+                                    <p className="text-[10px] text-gray-400 font-bold text-center">音声は有効です</p>
+                                </div>
                             )}
                         </div>
                     </div>
-                )}
-                
-                <button 
-                    onClick={() => setShowSettings(!showSettings)}
-                    className={`w-12 h-12 rounded-full shadow-xl flex items-center justify-center transition-all active:scale-90 ${settings.enabled ? 'bg-white text-blue-600 border-2 border-blue-50' : 'bg-gray-100 text-gray-400'}`}
-                >
-                    {settings.enabled ? (
-                        isAudioInitialized ? <Bell size={20} /> : <AlertTriangle className="text-amber-500" size={20} />
-                    ) : (
-                        <BellOff size={20} />
-                    )}
-                </button>
-            </div>
+                </div>
+            )}
         </>
     );
 }
