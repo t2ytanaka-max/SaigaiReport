@@ -19,8 +19,20 @@ export default function NotificationManager() {
     // 外部（ヘッダーのボタンなど）から設定パネルを開くためのイベントリスナー
     useEffect(() => {
         const handleOpenSettings = () => setShowSettings(prev => !prev);
+        const handleGetStatus = () => {
+            // 現在の状態を即座に再放送
+            window.dispatchEvent(new CustomEvent('saigai:audio-status', { 
+                detail: { active: isAudioInitializedRef.current } 
+            }));
+        };
+        
         window.addEventListener('saigai:open-settings', handleOpenSettings);
-        return () => window.removeEventListener('saigai:open-settings', handleOpenSettings);
+        window.addEventListener('saigai:request-audio-status', handleGetStatus);
+        
+        return () => {
+            window.removeEventListener('saigai:open-settings', handleOpenSettings);
+            window.removeEventListener('saigai:request-audio-status', handleGetStatus);
+        };
     }, []);
     
     const myId = getMyDeviceId();

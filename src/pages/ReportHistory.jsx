@@ -98,6 +98,10 @@ export default function ReportHistory() {
     useEffect(() => {
         const handleStatus = (e) => setIsAudioActive(e.detail.active);
         window.addEventListener('saigai:audio-status', handleStatus);
+        
+        // 起動時に現在の最新状態を NotificationManager に問い合わせる
+        window.dispatchEvent(new CustomEvent('saigai:request-audio-status'));
+        
         return () => window.removeEventListener('saigai:audio-status', handleStatus);
     }, []);
 
@@ -455,7 +459,7 @@ export default function ReportHistory() {
                     <div className="w-6 h-px bg-gray-100"></div>
                 </div>
                 <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
-                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.3.9</span>
+                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.4.0</span>
                 </div>
             </footer>
         </div>
