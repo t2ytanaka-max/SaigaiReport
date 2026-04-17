@@ -6,8 +6,7 @@ import { getMyDeviceId, getNotificationSettings, saveNotificationSettings } from
 
 const SOUND_URLS = {
     default: 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3', // ピンポーン
-    alert: 'https://assets.mixkit.co/active_storage/sfx/950/950-preview.mp3',   // サイレン風
-    smart: 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3'  // ピピッ
+    alert: 'https://assets.mixkit.co/active_storage/sfx/950/950-preview.mp3'    // サイレン風
 };
 
 export default function NotificationManager() {
@@ -40,10 +39,8 @@ export default function NotificationManager() {
     }, []);
     
     const myId = getMyDeviceId();
-    const startTimeRef = useRef(Date.now());
     const processedIdsRef = useRef(new Set());
     const audioRef = useRef(null);
-    const audioContextRef = useRef(null);
     
     // 最新の設定状態を常に参照できるように Ref を導入
     const settingsRef = useRef(settings);
@@ -59,53 +56,6 @@ export default function NotificationManager() {
             audioRef.current = new Audio();
         }
     }, []);
-
-    // 電子音合成生成 (通信不要・エンジンを再利用するように強化)
-    const playSynthesizedSound = async (type = 'smart') => {
-        try {
-            // エンジンがなければ作成（基本は initializeAudio で作成済み）
-            if (!audioContextRef.current) {
-                audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            
-            const context = audioContextRef.current;
-            
-            // iPhoneの場合、中断状態になっていることがあるので再開させる
-            if (context.state === 'suspended') {
-                await context.resume();
-            }
-
-            const volume = settingsRef.current.volume || 0.8;
-            
-            const playTone = (freq, start, duration) => {
-                const osc = context.createOscillator();
-                const gain = context.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, start);
-                gain.gain.setValueAtTime(volume * 0.3, start);
-                gain.gain.exponentialRampToValueAtTime(0.01, start + duration);
-                osc.connect(gain);
-                gain.connect(context.destination);
-                osc.start(start);
-                osc.stop(start + duration);
-            };
-
-            const now = context.currentTime;
-            if (type === 'smart') {
-                // ピッ、ピッ、ピッ というスマートな三連音
-                playTone(1200, now, 0.1);
-                playTone(1200, now + 0.15, 0.1);
-                playTone(1200, now + 0.3, 0.1);
-            } else {
-                // バックアップ用の単音
-                playTone(800, now, 0.3);
-            }
-            
-            setTimeout(() => context.close(), 1000);
-        } catch (e) {
-            console.error("Synthesis failed:", e);
-        }
-    };
 
     // 設定変更の保存
     const updateSettings = (newSettings) => {
@@ -126,12 +76,6 @@ export default function NotificationManager() {
         }
         
         try {
-            // スマートモード、またはファイルがない場合は合成音を使用
-            if (currentSettings.soundType === 'smart') {
-                playSynthesizedSound('smart');
-                return;
-            }
-
             if (audioRef.current) {
                 // 再生中の場合は停止
                 audioRef.current.pause();
@@ -143,8 +87,7 @@ export default function NotificationManager() {
                 const playPromise = audioRef.current.play();
                 if (playPromise !== undefined) {
                     playPromise.catch(e => {
-                        console.error("Audio play failed, falling back to synthesis:", e);
-                        playSynthesizedSound('fallback');
+                        console.error("Audio play failed (maybe browser restriction):", e);
                         // 重要: ここで false に戻すとベルがまた揺れ始めてしまうため、
                         // ユーザーの明示的なアクション以外で状態を戻さないようにします
                     });
@@ -235,12 +178,6 @@ export default function NotificationManager() {
     const initializeAudio = () => {
         setIsAudioInitialized(true);
         sessionStorage.setItem('saigai_audio_initialized', 'true');
-        
-        // 電子音エンジンの事前作成
-        if (!audioContextRef.current) {
-            audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        
         setShowSettings(false);
         // テスト再生
         const audio = new Audio(SOUND_URLS[settings.soundType]);
@@ -305,7 +242,7 @@ export default function NotificationManager() {
                                             onClick={() => updateSettings({ soundType: type })}
                                             className={`text-xs p-2.5 rounded-xl font-bold text-left transition-all flex items-center justify-between ${settings.soundType === type ? 'bg-blue-50 text-blue-600 ring-1 ring-blue-100' : 'text-gray-500 hover:bg-gray-50'}`}
                                         >
-                                            <span className="capitalize">{type === 'default' ? '標準 (Chime)' : type === 'alert' ? '緊急 (Alert)' : 'スマート (Smart)'}</span>
+                                            <span className="capitalize">{type === 'default' ? '標準 (ピンポーン)' : '緊急 (サイレン風)'}</span>
                                             {settings.soundType === type && <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />}
                                         </button>
                                     ))}
