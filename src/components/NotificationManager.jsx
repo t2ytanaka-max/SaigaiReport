@@ -140,11 +140,11 @@ export default function NotificationManager() {
 
         const unsubscribeLive = onSnapshot(qLive, (snapshot) => {
             snapshot.docChanges().forEach((change) => {
-                if (change.type === "added" || (change.type === "modified" && change.doc.data().status === "LIVE")) {
-                    const data = change.doc.data();
-                    const docId = `live_${change.doc.id}_${data.timestamp}`;
-                    
-                    // 以前のデータや自分の配信は無視
+                const data = change.doc.data();
+                const docId = `live_${change.doc.id}`; // 3秒ごとに変わるtimestampを除去し、セッション固定に
+                
+                if (change.type === "added" || (change.type === "modified" && data.status === "LIVE")) {
+                    // 以前のデータや自分の配信、またはすでにこのセッションで通知済みの場合は無視
                     if (data.timestamp < watchStartTime || data.deviceId === myId || processedIdsRef.current.has(docId)) return;
 
                     processedIdsRef.current.add(docId);
@@ -154,6 +154,9 @@ export default function NotificationManager() {
                         content: '現場からの生中継が始まりました',
                         icon: <Radio className="text-blue-500 animate-pulse" size={20} />
                     });
+                } else if (change.type === "removed") {
+                    // 配信が終了・削除された場合は、processedIds から削除して次の配信時に通知可能にする
+                    processedIdsRef.current.delete(docId);
                 }
             });
         });
