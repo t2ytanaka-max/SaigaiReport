@@ -59,6 +59,42 @@ export default function NotificationManager() {
         }
     }, []);
 
+    // 電子音合成生成 (通信不要)
+    const playSynthesizedSound = (type = 'smart') => {
+        try {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            const volume = settingsRef.current.volume || 0.8;
+            
+            const playTone = (freq, start, duration) => {
+                const osc = context.createOscillator();
+                const gain = context.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, start);
+                gain.gain.setValueAtTime(volume * 0.3, start);
+                gain.gain.exponentialRampToValueAtTime(0.01, start + duration);
+                osc.connect(gain);
+                gain.connect(context.destination);
+                osc.start(start);
+                osc.stop(start + duration);
+            };
+
+            const now = context.currentTime;
+            if (type === 'smart') {
+                // ピッ、ピッ、ピッ というスマートな三連音
+                playTone(1200, now, 0.1);
+                playTone(1200, now + 0.15, 0.1);
+                playTone(1200, now + 0.3, 0.1);
+            } else {
+                // バックアップ用の単音
+                playTone(800, now, 0.3);
+            }
+            
+            setTimeout(() => context.close(), 1000);
+        } catch (e) {
+            console.error("Synthesis failed:", e);
+        }
+    };
+
     // 設定変更の保存
     const updateSettings = (newSettings) => {
         const merged = { ...settings, ...newSettings };
@@ -78,6 +114,12 @@ export default function NotificationManager() {
         }
         
         try {
+            // スマートモード、またはファイルがない場合は合成音を使用
+            if (currentSettings.soundType === 'smart') {
+                playSynthesizedSound('smart');
+                return;
+            }
+
             if (audioRef.current) {
                 // 再生中の場合は停止
                 audioRef.current.pause();
@@ -89,7 +131,8 @@ export default function NotificationManager() {
                 const playPromise = audioRef.current.play();
                 if (playPromise !== undefined) {
                     playPromise.catch(e => {
-                        console.error("Audio play failed (maybe browser restriction):", e);
+                        console.error("Audio play failed, falling back to synthesis:", e);
+                        playSynthesizedSound('fallback');
                         // 重要: ここで false に戻すとベルがまた揺れ始めてしまうため、
                         // ユーザーの明示的なアクション以外で状態を戻さないようにします
                     });
