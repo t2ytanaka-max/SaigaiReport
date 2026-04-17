@@ -78,8 +78,13 @@ const ConfirmView = ({ data, onBack, onSend }) => {
                     <p className="text-lg font-medium">{data.category} {data.categoryDetail && `(${data.categoryDetail})`}</p>
                 </div>
                 <div className="border-b pb-2">
-                    <p className="text-xs text-gray-500">位置情報</p>
-                    <p className="text-lg font-medium">{data.location ? `緯度: ${data.location.lat.toFixed(4)}, 経度: ${data.location.lng.toFixed(4)} ` : '未取得'}</p>
+                    <p className="text-xs text-gray-500">活動状況</p>
+                    <p className={`text-lg font-medium ${data.status === '対応中' ? 'text-red-600' :
+                        data.status === '応急処置済み２次対応者へ引き継ぎ' ? 'text-blue-600' :
+                            data.status === '現場確認済み 対応不可' ? 'text-purple-600' :
+                                data.status === '現場不明 差戻し' ? 'text-green-600' :
+                                    data.status === '終了' ? 'text-black' : 'text-gray-800'
+                        }`}>{data.status}</p>
                 </div>
                 <div className="border-b pb-2">
                     <p className="text-xs text-gray-500">写真</p>
@@ -94,17 +99,12 @@ const ConfirmView = ({ data, onBack, onSend }) => {
                     </div>
                 </div>
                 <div className="border-b pb-2">
-                    <p className="text-xs text-gray-500">追加情報記入</p>
-                    <p className="text-lg font-medium whitespace-pre-wrap">{data.memo || 'なし'}</p>
+                    <p className="text-xs text-gray-500">位置情報</p>
+                    <p className="text-lg font-medium">{data.location ? `緯度: ${data.location.lat.toFixed(4)}, 経度: ${data.location.lng.toFixed(4)} ` : '未取得'}</p>
                 </div>
                 <div>
-                    <p className="text-xs text-gray-500">活動状況</p>
-                    <p className={`text-lg font-medium ${data.status === '対応中' ? 'text-red-600' :
-                        data.status === '応急処置済み２次対応者へ引き継ぎ' ? 'text-blue-600' :
-                            data.status === '現場確認済み 対応不可' ? 'text-purple-600' :
-                                data.status === '現場不明 差戻し' ? 'text-green-600' :
-                                    data.status === '終了' ? 'text-black' : 'text-gray-800'
-                        }`}>{data.status}</p>
+                    <p className="text-xs text-gray-500">追加情報記入</p>
+                    <p className="text-lg font-medium whitespace-pre-wrap">{data.memo || 'なし'}</p>
                 </div>
             </div>
 
@@ -619,98 +619,6 @@ export default function ReportForm() {
                     )}
                 </section>
 
-                {/* Location */}
-                <section className="bg-white p-4 rounded-lg shadow-sm">
-                    <label className="block text-sm font-bold text-gray-700 mb-2">位置情報 <span className="text-red-600 text-xs ml-1">自動マーキング 手動変更も可能</span></label>
-                    <div className="h-64 rounded-md border border-gray-300 overflow-hidden relative z-0">
-                        <MapContainer center={[35.6895, 139.6917]} zoom={13} style={{ height: '100%', width: '100%' }}>
-                            <TileLayer
-                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            />
-                            <LocationMarker
-                                position={position}
-                                setPosition={setPosition}
-                                isEditMode={!!location.state?.reportData}
-                            />
-                        </MapContainer>
-                    </div>
-                    <div className="mt-2 flex justify-between items-center bg-gray-50 p-2 rounded">
-                        <p className="text-xs text-gray-500 flex items-center">
-                            <span className="inline-block w-2 h-2 bg-blue-500 rounded-full mr-1"></span>
-                            地図をタップして位置を修正できます
-                        </p>
-                        <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                                // Find the Leaflet map instance and call locate
-                                // Since we can't easily access map instance here without context, 
-                                // we might need to rely on the user reloading page or check permission.
-                                // A better way is to move the button INSIDE the MapContainer but that styles it awkwardly.
-                                // Ideally LocationMarker should expose a ref or we add a control.
-                                // For now, let's suggest reloading.
-                                location.reload();
-                            }}
-                        >
-                            現在地を再取得
-                        </Button>
-                    </div>
-                </section>
-
-                {/* Photo */}
-                <section className="bg-white p-4 rounded-lg shadow-sm">
-                    <label className="block text-sm font-bold text-gray-700 mb-2">写真</label>
-
-                    <div className="grid grid-cols-2 gap-3 mt-3">
-                        {/* Camera Button */}
-                        <div className="relative">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                capture="environment"
-                                id="camera-input"
-                                className="hidden"
-                                {...register('photos_camera')}
-                            />
-                            <label
-                                htmlFor="camera-input"
-                                className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors bg-white h-32 active:bg-gray-200"
-                            >
-                                <span className="text-2xl mb-1">📷</span>
-                                <span className="text-sm font-bold text-gray-700">写真を撮影</span>
-                            </label>
-                        </div>
-
-                        {/* Library Button */}
-                        <div className="relative">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                multiple
-                                id="library-input"
-                                className="hidden"
-                                {...register('photos_library')}
-                            />
-                            <label
-                                htmlFor="library-input"
-                                className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors bg-white h-32 active:bg-gray-200"
-                            >
-                                <span className="text-2xl mb-1">🖼️</span>
-                                <span className="text-sm font-bold text-gray-700">アルバム選択</span>
-                            </label>
-                        </div>
-                    </div>
-                    {/* Preview Area (Consolidated) */}
-                    <div className="mt-3 grid grid-cols-4 gap-2">
-                        {/* We need to display previews from both inputs. 
-                             Since react-hook-form 'watch' is easy, let's use that. 
-                         */}
-                        <PhotoPreviews control={control} existingPhotos={formData?.photos} />
-                    </div>
-                </section>
-
                 {/* Status */}
                 <section className="bg-white p-4 rounded-lg shadow-sm">
                     <label className="block text-sm font-bold text-gray-700 mb-2">活動状況 <span className="text-red-600 text-xs ml-1">必須</span></label>
@@ -785,6 +693,98 @@ export default function ReportForm() {
                     )}
                 </section>
 
+                {/* Photo */}
+                <section className="bg-white p-4 rounded-lg shadow-sm">
+                    <label className="block text-sm font-bold text-gray-700 mb-2">写真</label>
+
+                    <div className="grid grid-cols-2 gap-3 mt-3">
+                        {/* Camera Button */}
+                        <div className="relative">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                capture="environment"
+                                id="camera-input"
+                                className="hidden"
+                                {...register('photos_camera')}
+                            />
+                            <label
+                                htmlFor="camera-input"
+                                className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors bg-white h-32 active:bg-gray-200"
+                            >
+                                <span className="text-2xl mb-1">📷</span>
+                                <span className="text-sm font-bold text-gray-700">写真を撮影</span>
+                            </label>
+                        </div>
+
+                        {/* Library Button */}
+                        <div className="relative">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                id="library-input"
+                                className="hidden"
+                                {...register('photos_library')}
+                            />
+                            <label
+                                htmlFor="library-input"
+                                className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors bg-white h-32 active:bg-gray-200"
+                            >
+                                <span className="text-2xl mb-1">🖼️</span>
+                                <span className="text-sm font-bold text-gray-700">アルバム選択</span>
+                            </label>
+                        </div>
+                    </div>
+                    {/* Preview Area (Consolidated) */}
+                    <div className="mt-3 grid grid-cols-4 gap-2">
+                        {/* We need to display previews from both inputs. 
+                             Since react-hook-form 'watch' is easy, let's use that. 
+                         */}
+                        <PhotoPreviews control={control} existingPhotos={formData?.photos} />
+                    </div>
+                </section>
+
+                {/* Location */}
+                <section className="bg-white p-4 rounded-lg shadow-sm">
+                    <label className="block text-sm font-bold text-gray-700 mb-2">位置情報 <span className="text-red-600 text-xs ml-1">自動マーキング 手動変更も可能</span></label>
+                    <div className="h-64 rounded-md border border-gray-300 overflow-hidden relative z-0">
+                        <MapContainer center={[35.6895, 139.6917]} zoom={13} style={{ height: '100%', width: '100%' }}>
+                            <TileLayer
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            />
+                            <LocationMarker
+                                position={position}
+                                setPosition={setPosition}
+                                isEditMode={!!location.state?.reportData}
+                            />
+                        </MapContainer>
+                    </div>
+                    <div className="mt-2 flex justify-between items-center bg-gray-50 p-2 rounded">
+                        <p className="text-xs text-gray-500 flex items-center">
+                            <span className="inline-block w-2 h-2 bg-blue-500 rounded-full mr-1"></span>
+                            地図をタップして位置を修正できます
+                        </p>
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                                // Find the Leaflet map instance and call locate
+                                // Since we can't easily access map instance here without context, 
+                                // we might need to rely on the user reloading page or check permission.
+                                // A better way is to move the button INSIDE the MapContainer but that styles it awkwardly.
+                                // Ideally LocationMarker should expose a ref or we add a control.
+                                // For now, let's suggest reloading.
+                                location.reload();
+                            }}
+                        >
+                            現在地を再取得
+                        </Button>
+                    </div>
+                </section>
+
                 {/* Memo */}
                 <section className="bg-white p-4 rounded-lg shadow-sm">
                     <label className="block text-sm font-bold text-gray-700 mb-2">追加情報記入 <span className="text-blue-600 text-xs ml-1">任意</span></label>
@@ -803,7 +803,7 @@ export default function ReportForm() {
                         <div className="w-6 h-px bg-gray-100"></div>
                     </div>
                     <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
-                        <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.6.0</span>
+                        <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.6.1</span>
                     </div>
                 </footer>
             </form>
