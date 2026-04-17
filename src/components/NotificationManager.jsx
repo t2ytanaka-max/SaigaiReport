@@ -14,7 +14,9 @@ export default function NotificationManager() {
     const [notification, setNotification] = useState(null);
     const [settings, setSettings] = useState(getNotificationSettings());
     const [showSettings, setShowSettings] = useState(false);
-    const [isAudioInitialized, setIsAudioInitialized] = useState(false);
+    const [isAudioInitialized, setIsAudioInitialized] = useState(() => {
+        return sessionStorage.getItem('saigai_audio_initialized') === 'true';
+    });
     
     // 外部（ヘッダーのボタンなど）から設定パネルを開くためのイベントリスナー
     useEffect(() => {
@@ -175,6 +177,7 @@ export default function NotificationManager() {
     // ブラウザの音声制限解除
     const initializeAudio = () => {
         setIsAudioInitialized(true);
+        sessionStorage.setItem('saigai_audio_initialized', 'true');
         setShowSettings(false);
         // テスト再生
         const audio = new Audio(SOUND_URLS[settings.soundType]);
