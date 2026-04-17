@@ -15,6 +15,8 @@ export default function NotificationManager() {
     const [settings, setSettings] = useState(getNotificationSettings());
     const [showSettings, setShowSettings] = useState(false);
     const [isAudioInitialized, setIsAudioInitialized] = useState(() => {
+        // UIの状態維持のためにsessionStorageを参照するが、
+        // 実際のブラウザ制限解除とは別に管理することを視野に入れる
         return sessionStorage.getItem('saigai_audio_initialized') === 'true';
     });
     
@@ -88,8 +90,8 @@ export default function NotificationManager() {
                 if (playPromise !== undefined) {
                     playPromise.catch(e => {
                         console.error("Audio play failed (maybe browser restriction):", e);
-                        // 失敗した場合は初期化フラグを戻して再入力を促す（安全策）
-                        if (!isTest) setIsAudioInitialized(false);
+                        // 重要: ここで false に戻すとベルがまた揺れ始めてしまうため、
+                        // ユーザーの明示的なアクション以外で状態を戻さないようにします
                     });
                 }
             }
