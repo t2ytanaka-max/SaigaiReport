@@ -43,6 +43,7 @@ export default function NotificationManager() {
     const startTimeRef = useRef(Date.now());
     const processedIdsRef = useRef(new Set());
     const audioRef = useRef(null);
+    const audioContextRef = useRef(null);
     
     // 最新の設定状態を常に参照できるように Ref を導入
     const settingsRef = useRef(settings);
@@ -59,10 +60,21 @@ export default function NotificationManager() {
         }
     }, []);
 
-    // 電子音合成生成 (通信不要)
-    const playSynthesizedSound = (type = 'smart') => {
+    // 電子音合成生成 (通信不要・エンジンを再利用するように強化)
+    const playSynthesizedSound = async (type = 'smart') => {
         try {
-            const context = new (window.AudioContext || window.webkitAudioContext)();
+            // エンジンがなければ作成（基本は initializeAudio で作成済み）
+            if (!audioContextRef.current) {
+                audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            const context = audioContextRef.current;
+            
+            // iPhoneの場合、中断状態になっていることがあるので再開させる
+            if (context.state === 'suspended') {
+                await context.resume();
+            }
+
             const volume = settingsRef.current.volume || 0.8;
             
             const playTone = (freq, start, duration) => {
@@ -223,6 +235,12 @@ export default function NotificationManager() {
     const initializeAudio = () => {
         setIsAudioInitialized(true);
         sessionStorage.setItem('saigai_audio_initialized', 'true');
+        
+        // 電子音エンジンの事前作成
+        if (!audioContextRef.current) {
+            audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
         setShowSettings(false);
         // テスト再生
         const audio = new Audio(SOUND_URLS[settings.soundType]);
