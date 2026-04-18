@@ -411,7 +411,7 @@ export default function ReportHistory() {
                                 <Printer size={18} /> 印刷する
                             </Button>
                         </div>
-                        <table className="w-full text-left border-collapse text-sm min-w-[700px] bg-white">
+                        <table className="w-full text-left border-collapse text-sm min-w-[700px] bg-white print:min-w-0 print:text-[10px]">
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-200 text-gray-600 font-black text-sm">
                                     <th className="py-3 px-4 whitespace-nowrap">管理番号</th>
@@ -437,9 +437,9 @@ export default function ReportHistory() {
                                             <td className="py-3 px-4 font-mono text-xs whitespace-nowrap text-gray-500">{report?.managementId || '-'}</td>
                                             <td className="py-3 px-4 whitespace-nowrap font-bold text-gray-700">{dateStr}</td>
                                             <td className="py-3 px-4 font-black text-gray-900 whitespace-nowrap">{report?.corp}</td>
-                                            <td className="py-3 px-4 font-bold text-gray-800">
+                                            <td className="py-3 px-4 font-bold text-gray-800 print:whitespace-nowrap print:px-2">
                                                 {report?.category} 
-                                                {report?.categoryDetail && <span className="text-gray-500 text-xs ml-1">({report.categoryDetail})</span>}
+                                                {report?.categoryDetail && <span className="text-gray-500 text-xs ml-1 print:text-[9px]">({report.categoryDetail})</span>}
                                             </td>
                                             <td className="py-3 px-4 whitespace-nowrap">
                                                 <span className="bg-gray-100 border border-gray-200 px-2 py-1 rounded text-xs font-black text-gray-700">
@@ -449,7 +449,7 @@ export default function ReportHistory() {
                                             <td className="py-3 px-4 whitespace-nowrap text-xs text-blue-600 font-bold">
                                                 {report?.photos?.length > 0 ? '○ 有り' : <span className="text-gray-400">-</span>}
                                             </td>
-                                            <td className="py-3 px-4 text-xs font-medium text-gray-600 truncate max-w-[200px] print:whitespace-normal print:break-words print:max-w-none">
+                                            <td className="py-3 px-4 text-xs font-medium text-gray-600 truncate max-w-[200px] print:text-[10px] print:whitespace-normal print:break-words print:max-w-none print:overflow-visible print:w-auto px-2">
                                                 {report?.memo || ''}
                                             </td>
                                         </tr>
@@ -498,7 +498,7 @@ export default function ReportHistory() {
                     <div className="w-6 h-px bg-gray-100"></div>
                 </div>
                 <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
-                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.6.7</span>
+                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.6.8</span>
                 </div>
             </footer>
         </div>
