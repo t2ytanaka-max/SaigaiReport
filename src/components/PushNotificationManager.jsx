@@ -9,12 +9,14 @@ import { getMyDeviceId } from '../lib/notifications';
 const VAPID_KEY = "BCMDZV8NR5rK66evN_3yUP16EPBYF0oQfa-DYjuWl9ZcS_4UDMv6K2l9N0bZrLcIP67YpL2MsBRaU1MF7mqNK2g";
 
 export default function PushNotificationManager() {
-    const [permission, setPermission] = useState(Notification.permission);
+    const isSupported = typeof window !== 'undefined' && 'Notification' in window && 'serviceWorker' in navigator;
+    const [permission, setPermission] = useState(isSupported ? Notification.permission : 'denied');
     const [showBanner, setShowBanner] = useState(false);
     const [status, setStatus] = useState('idle'); // idle, requesting, success, error
     const myId = getMyDeviceId();
 
     useEffect(() => {
+        if (!isSupported) return;
         // すでに許可されている場合はトークンを取得・更新
         if (Notification.permission === 'granted') {
             handleRequestPermission();
@@ -23,7 +25,7 @@ export default function PushNotificationManager() {
             const timer = setTimeout(() => setShowBanner(true), 3000);
             return () => clearTimeout(timer);
         }
-    }, []);
+    }, [isSupported]);
 
     // フォアグラウンド（アプリが開いている時）のメッセージ受信
     useEffect(() => {
@@ -37,7 +39,7 @@ export default function PushNotificationManager() {
     }, []);
 
     const handleRequestPermission = async () => {
-        if (!messaging) return;
+        if (!isSupported || !messaging) return;
         setStatus('requesting');
         
         try {
