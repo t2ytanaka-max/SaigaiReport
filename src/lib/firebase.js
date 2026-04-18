@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
+import { getMessaging } from "firebase/messaging";
 import { firebaseConfig } from "../config";
 
 // Initialize Firebase
@@ -15,5 +16,6 @@ if (typeof window !== 'undefined') {
 
 export const db_fs = getFirestore(app);
 export const storage = getStorage(app);
+export const messaging = typeof window !== 'undefined' ? getMessaging(app) : null;
 
 export default app;
