@@ -292,8 +292,15 @@ export default function ReportHistory() {
                                             <span className={`px-3 py-1 rounded-md text-xs font-black shadow-sm ${statusColors[report?.status] || 'bg-gray-200 text-gray-700'}`}>
                                                 {report?.status}
                                             </span>
-                                            <div className="flex items-center text-gray-900 text-sm font-black gap-1.5">
-                                                <Clock size={14} className="text-gray-400" /> {dateStr}
+                                            <div className="flex flex-col items-end gap-0.5">
+                                                {report?.managementId && (
+                                                    <div className="text-[10px] font-mono font-black text-gray-500 bg-gray-100/80 px-1.5 py-0.5 rounded border border-gray-200">
+                                                        No.{report.managementId}
+                                                    </div>
+                                                )}
+                                                <div className="flex items-center text-gray-900 text-sm font-black gap-1.5">
+                                                    <Clock size={14} className="text-gray-400" /> {dateStr}
+                                                </div>
                                             </div>
                                         </div>
 

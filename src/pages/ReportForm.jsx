@@ -66,6 +66,10 @@ const ConfirmView = ({ data, onBack, onSend }) => {
 
             <div className="bg-white p-4 rounded-lg shadow-sm space-y-4">
                 <div className="border-b pb-2">
+                    <p className="text-xs text-gray-500">管理番号</p>
+                    <p className="text-lg font-mono font-medium text-blue-700">{data.managementId}</p>
+                </div>
+                <div className="border-b pb-2">
                     <p className="text-xs text-gray-500">報告日時</p>
                     <p className="text-lg font-medium">{data.reportDate.replace('T', ' ')}</p>
                 </div>
@@ -385,9 +389,19 @@ export default function ReportForm() {
         // photos_camera と photos_library は firebase には送れないため削除
         const { photos_camera, photos_library, ...cleanData } = data;
 
+        const originalManagementId = location.state?.reportData?.managementId || cleanData.managementId;
+        const yy = now.getFullYear().toString().slice(2);
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const min = String(now.getMinutes()).padStart(2, '0');
+        const rand = Math.random().toString(36).substring(2, 4).toUpperCase(); // ランダムな2文字
+        const managementId = originalManagementId || `${yy}${mm}${dd}-${hh}${min}-${rand}`;
+
         const reportData = {
             ...cleanData,
             id: originalId,
+            managementId: managementId,
             reportDate: isoDate,
             photos: finalPhotos,
             location: position ? { lat: Number(position.lat), lng: Number(position.lng) } : null,
