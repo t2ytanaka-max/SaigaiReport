@@ -19,19 +19,9 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// アプリが閉じている時（バックグラウンド）の通知受信ハンドラ
+// FCM SDK が notification ペイロードをもとに「自動で完璧な通知」を出してくれるため、
+// アプリ側では余計な出し直しをしないように整理します（2重通知の防止）
 messaging.onBackgroundMessage((payload) => {
-  console.log('[src/sw.js] Received background message ', payload);
-  
-  const notificationTitle = payload.notification?.title || 'Live大村市消防団（緊急）';
-  const notificationOptions = {
-    body: payload.notification?.body || '新しい通知があります',
-    icon: '/pwa-192x192.png',
-    data: payload.data, // クリック時の遷移先情報など
-    tag: 'saigai-report-notification', // 同じタグで上書き（複数通知の乱立防止）
-    renotify: true, // 上書き時も音を鳴らす
-    vibrate: [200, 100, 200, 100, 500] // Androidの強力なバイブレーションパターン
-  };
-
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  console.log('[src/sw.js] 自動送信システムから通知を受信しました: ', payload);
 });
+

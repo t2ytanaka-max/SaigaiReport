@@ -92,20 +92,6 @@ export default function ReportHistory() {
     const [selectedImage, setSelectedImage] = useState(null);
     const previousReportIds = useRef(new Set());
     const isFirstLoad = useRef(true);
-    const [isAudioActive, setIsAudioActive] = useState(() => {
-        return sessionStorage.getItem('saigai_audio_initialized') === 'true';
-    });
-
-    // 音声状態の変更をリッスン
-    useEffect(() => {
-        const handleStatus = (e) => setIsAudioActive(e.detail.active);
-        window.addEventListener('saigai:audio-status', handleStatus);
-        
-        // 起動時に現在の最新状態を NotificationManager に問い合わせる
-        window.dispatchEvent(new CustomEvent('saigai:request-audio-status'));
-        
-        return () => window.removeEventListener('saigai:audio-status', handleStatus);
-    }, []);
 
     const refreshData = async (serverData = []) => {
         try {
@@ -250,21 +236,6 @@ export default function ReportHistory() {
                             <h1 className="text-xl font-black tracking-tighter text-gray-900 leading-none">リアルタイム災害情報</h1>
                         </div>
                     </div>
-                    <button
-                        onClick={() => window.dispatchEvent(new CustomEvent('saigai:open-settings'))}
-                        className={`p-2.5 rounded-xl transition-all relative border ${
-                            isAudioActive 
-                            ? 'bg-blue-50 text-blue-600 border-blue-100 shadow-sm' 
-                            : 'bg-amber-50 text-amber-500 border-amber-200 shadow-lg animate-swing'
-                        } hover:bg-white`}
-                    >
-                        <Bell size={20} fill={isAudioActive ? 'currentColor' : 'none'} className={isAudioActive ? '' : 'animate-pulse'} />
-                        {!isAudioActive && (
-                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white animate-bounce shadow-lg">
-                                !
-                            </div>
-                        )}
-                    </button>
                 </div>
 
                 {/* Status Tabs */}
