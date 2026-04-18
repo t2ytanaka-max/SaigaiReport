@@ -4,7 +4,7 @@ import { Button } from '../components/ui/Button';
 import { getOutbox, deleteFromOutbox } from '../lib/db';
 import { db_fs } from '../lib/firebase';
 import { collection, query, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
-import { Trash2, MapPin, List, Map as MapIcon, Plus, Edit, Image as ImageIcon, Bell, BellOff, Video, ChevronRight, Clock, Info } from 'lucide-react';
+import { Trash2, MapPin, List, Map as MapIcon, Plus, Edit, Image as ImageIcon, Bell, BellOff, Video, ChevronRight, Clock, Info, Printer, TableProperties } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -243,7 +243,8 @@ export default function ReportHistory() {
                     {[
                         { id: 'list', icon: List, label: 'タイムライン' },
                         { id: 'map', icon: MapIcon, label: '地図表示' },
-                        { id: 'live', icon: Video, label: 'LIVE配信' }
+                        { id: 'live', icon: Video, label: 'LIVE配信' },
+                        { id: 'table', icon: TableProperties, label: '一覧表' }
                     ].map((tab) => (
                         <button
                             key={tab.id}
@@ -399,6 +400,64 @@ export default function ReportHistory() {
                             })}
                         </MapContainer>
                     </div>
+                ) : viewMode === 'table' ? (
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto print:border-none print:shadow-none print:p-0 p-1 mb-10">
+                        <div className="p-4 flex justify-between items-center print-only-hide border-b border-gray-100">
+                            <div>
+                                <h2 className="text-lg font-black text-gray-800">報告一覧表（本部管理用）</h2>
+                                <p className="text-xs text-gray-500 font-bold mt-1 tracking-widest">※古い報告順に表示しています。</p>
+                            </div>
+                            <Button className="flex items-center gap-2 bg-gray-800 shadow-md text-white px-5" onClick={() => window.print()}>
+                                <Printer size={18} /> 印刷する
+                            </Button>
+                        </div>
+                        <table className="w-full text-left border-collapse text-sm min-w-[700px] bg-white">
+                            <thead>
+                                <tr className="bg-gray-50 border-b border-gray-200 text-gray-600 font-black text-sm">
+                                    <th className="py-3 px-4 whitespace-nowrap">管理番号</th>
+                                    <th className="py-3 px-4 whitespace-nowrap">日時</th>
+                                    <th className="py-3 px-4 whitespace-nowrap">分団</th>
+                                    <th className="py-3 px-4">災害内容</th>
+                                    <th className="py-3 px-4 whitespace-nowrap">状況</th>
+                                    <th className="py-3 px-4 whitespace-nowrap">写真</th>
+                                    <th className="py-3 px-4">追加情報(メモ)</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {[...reports].reverse().map((item) => {
+                                    const report = item.data;
+                                    const dateStr = (() => {
+                                        try {
+                                            let d = report?.reportDate ? new Date(report.reportDate) : (item.created_at ? new Date(item.created_at) : null);
+                                            return (d && !isNaN(d.getTime())) ? d.toLocaleString('ja-JP', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '日時不明';
+                                        } catch (e) { return '日時不明'; }
+                                    })();
+                                    return (
+                                        <tr key={item.id} className="hover:bg-blue-50/50 transition-colors break-inside-avoid">
+                                            <td className="py-3 px-4 font-mono text-xs whitespace-nowrap text-gray-500">{report?.managementId || '-'}</td>
+                                            <td className="py-3 px-4 whitespace-nowrap font-bold text-gray-700">{dateStr}</td>
+                                            <td className="py-3 px-4 font-black text-gray-900 whitespace-nowrap">{report?.corp}</td>
+                                            <td className="py-3 px-4 font-bold text-gray-800">
+                                                {report?.category} 
+                                                {report?.categoryDetail && <span className="text-gray-500 text-xs ml-1">({report.categoryDetail})</span>}
+                                            </td>
+                                            <td className="py-3 px-4 whitespace-nowrap">
+                                                <span className="bg-gray-100 border border-gray-200 px-2 py-1 rounded text-xs font-black text-gray-700">
+                                                    {report?.status}
+                                                </span>
+                                            </td>
+                                            <td className="py-3 px-4 whitespace-nowrap text-xs text-blue-600 font-bold">
+                                                {report?.photos?.length > 0 ? '○ 有り' : <span className="text-gray-400">-</span>}
+                                            </td>
+                                            <td className="py-3 px-4 text-xs font-medium text-gray-600 truncate max-w-[200px] print:whitespace-normal print:break-words print:max-w-none">
+                                                {report?.memo || ''}
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 ) : <div className="bg-white rounded-3xl p-2 shadow-sm"><LiveView /></div>}
             </main>
 
@@ -439,7 +498,7 @@ export default function ReportHistory() {
                     <div className="w-6 h-px bg-gray-100"></div>
                 </div>
                 <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
-                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.6.6</span>
+                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.6.7</span>
                 </div>
             </footer>
         </div>

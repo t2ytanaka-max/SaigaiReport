@@ -21,3 +21,47 @@ body {
   display: inline-block;
   transform-origin: top center;
 }
+
+/* 印刷専用スタイル */
+@media print {
+  @page {
+    size: A4 landscape; /* A4横向き推奨 */
+    margin: 10mm;
+  }
+  
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  /* 印刷時に隠す要素 */
+  .no-print,
+  header,
+  footer,
+  .print-only-hide,
+  a[href^="https://www.google.com/maps"] {
+    display: none !important;
+  }
+
+  /* 表の最適化 */
+  table {
+    width: 100% !important;
+    border: 1px solid #ddd;
+  }
+  
+  th, td {
+    padding: 8px !important;
+    border-bottom: 1px solid #ddd !important;
+    color: black !important;
+  }
+
+  th {
+    background-color: #f3f4f6 !important;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
