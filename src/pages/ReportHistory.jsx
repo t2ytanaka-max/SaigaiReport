@@ -224,7 +224,7 @@ export default function ReportHistory() {
     };
 
     return (
-        <div className="max-w-md mx-auto min-h-screen bg-gray-50 pb-24 relative font-sans">
+        <div className="max-w-md print:max-w-none print:w-full mx-auto min-h-screen bg-gray-50 print:bg-white pb-24 print:pb-0 relative font-sans">
             {/* Header */}
             <header className="sticky top-0 bg-white/90 backdrop-blur-md z-[100] border-b border-gray-100 p-4 shadow-sm">
                 <div className="flex justify-between items-center mb-3">
@@ -259,7 +259,7 @@ export default function ReportHistory() {
             </header>
 
             {/* Main Content */}
-            <main className="px-4 pt-4">
+            <main className="px-4 pt-4 print:p-0">
                 {viewMode === 'list' ? (
                     reports.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-24 text-gray-400 bg-white rounded-2xl border border-dashed border-gray-200 mt-4">
