@@ -411,16 +411,16 @@ export default function ReportHistory() {
                                 <Printer size={18} /> 印刷する
                             </Button>
                         </div>
-                        <table className="w-full text-left border-collapse text-sm min-w-[700px] bg-white print:min-w-0 print:text-[10px]">
+                        <table className="w-full text-left border-collapse text-sm min-w-[700px] bg-white print:min-w-0">
                             <thead>
-                                <tr className="bg-gray-50 border-b border-gray-200 text-gray-600 font-black text-sm">
-                                    <th className="py-3 px-4 whitespace-nowrap">管理番号</th>
-                                    <th className="py-3 px-4 whitespace-nowrap">日時</th>
-                                    <th className="py-3 px-4 whitespace-nowrap">分団</th>
-                                    <th className="py-3 px-4">災害内容</th>
-                                    <th className="py-3 px-4 whitespace-nowrap">状況</th>
-                                    <th className="py-3 px-4 whitespace-nowrap">写真</th>
-                                    <th className="py-3 px-4">追加情報(メモ)</th>
+                                <tr className="bg-gray-50 border-b border-gray-200 text-gray-600 font-black text-sm print:text-[9px]">
+                                    <th className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">管理番号</th>
+                                    <th className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">日時</th>
+                                    <th className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">分団</th>
+                                    <th className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">災害内容</th>
+                                    <th className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">状況</th>
+                                    <th className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">写真</th>
+                                    <th className="py-3 px-4 print:py-1 print:px-1">追加情報(メモ)</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
@@ -434,22 +434,22 @@ export default function ReportHistory() {
                                     })();
                                     return (
                                         <tr key={item.id} className="hover:bg-blue-50/50 transition-colors break-inside-avoid">
-                                            <td className="py-3 px-4 font-mono text-xs whitespace-nowrap text-gray-500">{report?.managementId || '-'}</td>
-                                            <td className="py-3 px-4 whitespace-nowrap font-bold text-gray-700">{dateStr}</td>
-                                            <td className="py-3 px-4 font-black text-gray-900 whitespace-nowrap">{report?.corp}</td>
-                                            <td className="py-3 px-4 font-bold text-gray-800 print:whitespace-nowrap print:px-2">
+                                            <td className="py-3 px-4 print:py-1 print:px-1 font-mono text-xs print:text-[9px] whitespace-nowrap text-gray-500">{report?.managementId || '-'}</td>
+                                            <td className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap print:text-[9px] font-bold text-gray-700">{dateStr}</td>
+                                            <td className="py-3 px-4 print:py-1 print:px-1 font-black print:text-[9px] text-gray-900 whitespace-nowrap">{report?.corp}</td>
+                                            <td className="py-3 px-4 print:py-1 print:px-1 font-bold print:text-[9px] text-gray-800 print:whitespace-nowrap">
                                                 {report?.category} 
-                                                {report?.categoryDetail && <span className="text-gray-500 text-xs ml-1 print:text-[9px]">({report.categoryDetail})</span>}
+                                                {report?.categoryDetail && <span className="text-gray-500 text-xs print:text-[8px] ml-1">({report.categoryDetail})</span>}
                                             </td>
-                                            <td className="py-3 px-4 whitespace-nowrap">
-                                                <span className="bg-gray-100 border border-gray-200 px-2 py-1 rounded text-xs font-black text-gray-700">
+                                            <td className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">
+                                                <span className="bg-gray-100 border border-gray-200 px-2 py-1 print:px-1 print:py-0 rounded text-xs print:text-[9px] font-black text-gray-700">
                                                     {report?.status}
                                                 </span>
                                             </td>
-                                            <td className="py-3 px-4 whitespace-nowrap text-xs text-blue-600 font-bold">
+                                            <td className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap text-xs print:text-[9px] text-blue-600 font-bold">
                                                 {report?.photos?.length > 0 ? '○ 有り' : <span className="text-gray-400">-</span>}
                                             </td>
-                                            <td className="py-3 px-4 text-xs font-medium text-gray-600 truncate max-w-[200px] print:text-[10px] print:whitespace-normal print:break-words print:max-w-none print:overflow-visible print:w-auto px-2">
+                                            <td className="py-3 px-4 print:py-1 print:px-1 text-xs print:text-[9px] font-medium text-gray-600 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap print:whitespace-normal print:max-w-none print:w-auto print:overflow-visible print:break-words">
                                                 {report?.memo || ''}
                                             </td>
                                         </tr>
