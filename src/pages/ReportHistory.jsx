@@ -211,8 +211,9 @@ export default function ReportHistory() {
     }, [reports]);
 
     // CSV出力関数（BOM付きUTF-8でExcelが日本語を正しく読める）
+    // ※列の並びは印刷一覧表と同じ順番
     const exportCSV = () => {
-        const headers = ['管理番号', '日時', '分団', '災害内容', '詳細', '状況', '写真', '追加情報(メモ)'];
+        const headers = ['管理番号', '日時', '分団', '位置座標(緯度,経度)', '災害内容', '詳細', '状況', '写真', '追加情報(メモ)'];
         const rows = [[...headers]];
         const sorted = [...reports].reverse();
         sorted.forEach((item) => {
@@ -223,14 +224,18 @@ export default function ReportHistory() {
                     return (d && !isNaN(d.getTime())) ? d.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '日時不明';
                 } catch (e) { return '日時不明'; }
             })();
+            const locationStr = (report?.location?.lat && report?.location?.lng)
+                ? `${Number(report.location.lat).toFixed(5)},${Number(report.location.lng).toFixed(5)}`
+                : '';
             rows.push([
                 report?.managementId || '',
                 dateStr,
                 report?.corp || '',
+                locationStr,
                 report?.category || '',
                 report?.categoryDetail || '',
                 report?.status || '',
-                report?.photos?.length > 0 ? '有り' : '',
+                report?.photos?.length > 0 ? '写真あり' : '',
                 report?.memo || ''
             ]);
         });
