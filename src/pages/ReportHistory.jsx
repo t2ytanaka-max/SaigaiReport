@@ -4,7 +4,7 @@ import { Button } from '../components/ui/Button';
 import { getOutbox, deleteFromOutbox } from '../lib/db';
 import { db_fs } from '../lib/firebase';
 import { collection, query, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
-import { Trash2, MapPin, List, Map as MapIcon, Plus, Edit, Image as ImageIcon, Bell, BellOff, Video, ChevronRight, Clock, Info, Printer, TableProperties } from 'lucide-react';
+import { Trash2, MapPin, List, Map as MapIcon, Plus, Edit, Image as ImageIcon, Bell, BellOff, Video, ChevronRight, Clock, Info, Printer, TableProperties, FileSpreadsheet } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -210,6 +210,47 @@ export default function ReportHistory() {
         return [sumLat / points.length, sumLng / points.length];
     }, [reports]);
 
+    // CSV出力関数（BOM付きUTF-8でExcelが日本語を正しく読める）
+    const exportCSV = () => {
+        const headers = ['管理番号', '日時', '分団', '災害内容', '詳細', '状況', '写真', '追加情報(メモ)'];
+        const rows = [[...headers]];
+        const sorted = [...reports].reverse();
+        sorted.forEach((item) => {
+            const report = item.data || {};
+            const dateStr = (() => {
+                try {
+                    let d = report?.reportDate ? new Date(report.reportDate) : (item.created_at ? new Date(item.created_at) : null);
+                    return (d && !isNaN(d.getTime())) ? d.toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '日時不明';
+                } catch (e) { return '日時不明'; }
+            })();
+            rows.push([
+                report?.managementId || '',
+                dateStr,
+                report?.corp || '',
+                report?.category || '',
+                report?.categoryDetail || '',
+                report?.status || '',
+                report?.photos?.length > 0 ? '有り' : '',
+                report?.memo || ''
+            ]);
+        });
+        const bom = '\uFEFF';
+        const csvContent = bom + rows.map(r =>
+            r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+        ).join('\r\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const now = new Date();
+        const dateLabel = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+        a.href = url;
+        a.download = `disaster_report_${dateLabel}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
     const createStatusIcon = (status) => {
         let color = '#4b5563';
         switch (status) {
@@ -407,9 +448,14 @@ export default function ReportHistory() {
                                 <h2 className="text-lg font-black text-gray-800">報告一覧表（本部管理用）</h2>
                                 <p className="text-xs text-gray-500 font-bold mt-1 tracking-widest">※古い報告順に表示しています。</p>
                             </div>
-                            <Button className="flex items-center gap-2 bg-gray-800 shadow-md text-white px-5" onClick={() => window.print()}>
-                                <Printer size={18} /> 印刷する
-                            </Button>
+                            <div className="flex items-center gap-2">
+                                <Button className="flex items-center gap-2 bg-green-700 shadow-md text-white px-4" onClick={exportCSV}>
+                                    <FileSpreadsheet size={18} /> CSV出力
+                                </Button>
+                                <Button className="flex items-center gap-2 bg-gray-800 shadow-md text-white px-4" onClick={() => window.print()}>
+                                    <Printer size={18} /> 印刷する
+                                </Button>
+                            </div>
                         </div>
                         <table className="w-full text-left border-collapse text-sm min-w-[700px] bg-white print:min-w-0">
                             <thead>
