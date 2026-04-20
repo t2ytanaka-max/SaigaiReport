@@ -25,8 +25,8 @@ body {
 /* 印刷専用スタイル */
 @media print {
   @page {
-    size: A4 portrait; /* A4縦向き */
-    margin: 5mm;
+    size: A4 landscape; /* A4横向き */
+    margin: 8mm;
   }
   
   body {
@@ -46,18 +46,26 @@ body {
   /* 表の最適化 */
   table {
     width: 100% !important;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
   }
   
   th, td {
-    padding: 8px !important;
+    padding: 7px 8px !important;
     border-bottom: 1px solid #ddd !important;
     color: black !important;
+    vertical-align: middle !important;
   }
 
   th {
     background-color: #f3f4f6 !important;
     -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* 写真の印刷許可 */
+  img {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   .break-inside-avoid {

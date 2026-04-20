@@ -457,16 +457,17 @@ export default function ReportHistory() {
                                 </Button>
                             </div>
                         </div>
-                        <table className="w-full text-left border-collapse text-sm min-w-[700px] bg-white print:min-w-0">
+                        <table className="w-full text-left border-collapse text-sm min-w-[900px] bg-white print:min-w-0">
                             <thead>
-                                <tr className="bg-gray-50 border-b border-gray-200 text-gray-600 font-black text-sm print:text-[9px]">
-                                    <th className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">管理番号</th>
-                                    <th className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">日時</th>
-                                    <th className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">分団</th>
-                                    <th className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">災害内容</th>
-                                    <th className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">状況</th>
-                                    <th className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">写真</th>
-                                    <th className="py-3 px-4 print:py-1 print:px-1">追加情報(メモ)</th>
+                                <tr className="bg-gray-50 border-b border-gray-200 text-gray-600 font-black text-sm print:text-[10px]">
+                                    <th className="py-3 px-3 whitespace-nowrap">管理番号</th>
+                                    <th className="py-3 px-3 whitespace-nowrap">日時</th>
+                                    <th className="py-3 px-3 whitespace-nowrap">分団</th>
+                                    <th className="py-3 px-3 whitespace-nowrap">位置座標</th>
+                                    <th className="py-3 px-3">災害内容</th>
+                                    <th className="py-3 px-3 whitespace-nowrap">状況</th>
+                                    <th className="py-3 px-3 whitespace-nowrap">写真</th>
+                                    <th className="py-3 px-3">追加情報(メモ)</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
@@ -480,22 +481,34 @@ export default function ReportHistory() {
                                     })();
                                     return (
                                         <tr key={item.id} className="hover:bg-blue-50/50 transition-colors break-inside-avoid">
-                                            <td className="py-3 px-4 print:py-1 print:px-1 font-mono text-xs print:text-[9px] whitespace-nowrap text-gray-500">{report?.managementId || '-'}</td>
-                                            <td className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap print:text-[9px] font-bold text-gray-700">{dateStr}</td>
-                                            <td className="py-3 px-4 print:py-1 print:px-1 font-black print:text-[9px] text-gray-900 whitespace-nowrap">{report?.corp}</td>
-                                            <td className="py-3 px-4 print:py-1 print:px-1 font-bold print:text-[9px] text-gray-800 print:whitespace-nowrap">
-                                                {report?.category} 
-                                                {report?.categoryDetail && <span className="text-gray-500 text-xs print:text-[8px] ml-1">({report.categoryDetail})</span>}
+                                            <td className="py-2 px-3 font-mono text-xs print:text-[10px] whitespace-nowrap text-gray-500">{report?.managementId || '-'}</td>
+                                            <td className="py-2 px-3 whitespace-nowrap print:text-[10px] font-bold text-gray-700">{dateStr}</td>
+                                            <td className="py-2 px-3 font-black print:text-[10px] text-gray-900 whitespace-nowrap">{report?.corp}</td>
+                                            <td className="py-2 px-3 font-mono text-xs print:text-[9px] whitespace-nowrap text-gray-500">
+                                                {report?.location?.lat && report?.location?.lng
+                                                    ? `${Number(report.location.lat).toFixed(5)},${Number(report.location.lng).toFixed(5)}`
+                                                    : <span className="text-gray-300">-</span>}
                                             </td>
-                                            <td className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap">
-                                                <span className="bg-gray-100 border border-gray-200 px-2 py-1 print:px-1 print:py-0 rounded text-xs print:text-[9px] font-black text-gray-700">
+                                            <td className="py-2 px-3 font-bold print:text-[10px] text-gray-800 whitespace-nowrap">
+                                                {report?.category} 
+                                                {report?.categoryDetail && <span className="text-gray-500 text-xs print:text-[9px] ml-1">({report.categoryDetail})</span>}
+                                            </td>
+                                            <td className="py-2 px-3 whitespace-nowrap">
+                                                <span className="bg-gray-100 border border-gray-200 px-2 py-1 rounded text-xs print:text-[10px] font-black text-gray-700">
                                                     {report?.status}
                                                 </span>
                                             </td>
-                                            <td className="py-3 px-4 print:py-1 print:px-1 whitespace-nowrap text-xs print:text-[9px] text-blue-600 font-bold">
-                                                {report?.photos?.length > 0 ? '○ 有り' : <span className="text-gray-400">-</span>}
+                                            <td className="py-2 px-3 whitespace-nowrap">
+                                                {report?.photos?.length > 0
+                                                    ? <img
+                                                        src={report.photos[0]}
+                                                        alt="現場写真"
+                                                        style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', display: 'block' }}
+                                                        onError={(e) => { e.target.style.display = 'none'; }}
+                                                      />
+                                                    : <span className="text-gray-300 text-xs">-</span>}
                                             </td>
-                                            <td className="py-3 px-4 print:py-1 print:px-1 text-xs print:text-[9px] font-medium text-gray-600 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap print:whitespace-normal print:max-w-none print:w-auto print:overflow-visible print:break-words">
+                                            <td className="py-2 px-3 text-xs print:text-[10px] font-medium text-gray-600 max-w-[220px] overflow-hidden text-ellipsis whitespace-nowrap print:whitespace-normal print:max-w-none print:w-auto print:overflow-visible print:break-words">
                                                 {report?.memo || ''}
                                             </td>
                                         </tr>
@@ -544,7 +557,7 @@ export default function ReportHistory() {
                     <div className="w-6 h-px bg-gray-100"></div>
                 </div>
                 <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
-                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.6.9</span>
+                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.7.0</span>
                 </div>
             </footer>
         </div>
