@@ -817,7 +817,7 @@ export default function ReportForm() {
                         <div className="w-6 h-px bg-gray-100"></div>
                     </div>
                     <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
-                        <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.7.0</span>
+                        <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v1.7.1</span>
                     </div>
                 </footer>
             </form>
