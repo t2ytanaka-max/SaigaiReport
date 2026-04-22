@@ -16,8 +16,8 @@ export default defineConfig({
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        id: '/saigai-report-v1-6-8',
-        name: 'Live大村市消防団 v1.6.8',
+        id: '/saigai-report-v1-7-1',
+        name: 'Live大村市消防団 v1.7.1',
         short_name: 'Live大村市消防団',
         description: '消防団向け災害報告アプリ',
         theme_color: '#ef4444',
