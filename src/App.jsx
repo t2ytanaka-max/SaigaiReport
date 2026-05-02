@@ -5,15 +5,19 @@ import ReportHistory from './pages/ReportHistory';
 
 import PushNotificationManager from './components/PushNotificationManager';
 
+import AuthGate from './components/AuthGate';
+
 function App() {
   return (
     <>
       <PushNotificationManager />
-      <Routes>
-        <Route path="/" element={<ReportHistory />} />
-        <Route path="/report" element={<ReportForm />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <AuthGate>
+        <Routes>
+          <Route path="/" element={<ReportHistory />} />
+          <Route path="/report" element={<ReportForm />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AuthGate>
     </>
   );
 }
