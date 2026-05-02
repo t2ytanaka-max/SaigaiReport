@@ -267,7 +267,7 @@ export default function LiveView() {
                             </Button>
                             
                             <p className="text-xs text-gray-800 text-center font-black px-4 leading-relaxed bg-yellow-50 py-3 rounded-xl border border-yellow-100 shadow-inner">
-                                ※3秒おきに最新画像を送信します。通信環境をご確認ください。<br/>配信中はカメラを閉じないでください。
+                                ３秒おきに最新画像を送信します。<br />通信環境をご確認ください。<br />配信中はカメラを閉じないでください。
                             </p>
                         </div>
                     ) : (
