@@ -714,7 +714,7 @@
                         <h3><span style="background: var(--primary); color: white; border-radius: 50%; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem;">1</span>現場情報の報告</h3>
                         <p>災害現場に到着したら、状況を簡単に報告できます。</p>
                         <ul>
-                            <li><strong>位置情報の自動選択</strong>：GPSボタンを押すと、今いる場所が自動的に地図上にセットされます。</li>
+                            <li><strong>位置情報の自動選択</strong>：今いる場所が自動的に地図上にセットされます。</li>
                             <li><strong>現場写真の添付</strong>：カメラボタンから、その場で撮影した写真をすぐに添付できます。</li>
                             <li><strong>災害種別の選択</strong>：道路冠水、土砂崩れなど、タップするだけで選べます。</li>
                         </ul>
@@ -723,30 +723,50 @@
                         <!-- スマホモック：報告画面 -->
                         <div class="phone-mockup">
                             <div class="screen">
-                                <div class="app-header">
-                                    <div class="app-title"><i data-lucide="alert-triangle" size="14"></i>現場報告</div>
-                                    <div>大村市消防団</div>
+                                <div class="app-header" style="background: white; color: var(--secondary); border-bottom: 1px solid #e2e8f0; padding: 0.8rem 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="font-size: 0.7rem; font-weight: 900; color: #1e293b;">大村市消防団災害報告アプリ</div>
+                                    <div style="font-size: 0.6rem; color: #2563eb; border: 1px solid #bfdbfe; background: #eff6ff; padding: 0.2rem 0.4rem; border-radius: 4px; font-weight: 700; display: flex; align-items: center; gap: 0.15rem;">
+                                        <i data-lucide="list-filter" style="width: 10px; height: 10px;"></i>履歴
+                                    </div>
                                 </div>
-                                <div class="form-mock">
-                                    <div class="mock-field">
-                                        <div class="mock-label">1. 現在地（地図で確認）</div>
-                                        <div class="mock-map-box">
-                                            <i data-lucide="map-pin" class="mock-map-pin" size="24"></i>
-                                            <span style="font-size: 0.6rem; color: #475569; position: absolute; bottom: 5px;">大村市玖島1丁目（大村公園付近）</span>
+                                <div class="form-mock" style="background: #f8fafc; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.6rem; overflow-y: auto; flex: 1;">
+                                    <!-- 所属分団 -->
+                                    <div class="mock-field" style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.6rem;">
+                                        <div class="mock-label" style="font-size: 0.65rem; font-weight: 700; color: #475569; margin-bottom: 0.3rem;">所属分団</div>
+                                        <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.3rem 0.5rem; color: #94a3b8; font-size: 0.65rem; display: flex; justify-content: space-between; align-items: center; background: white;">
+                                            選択してください
+                                            <i data-lucide="chevron-down" style="width: 12px; height: 12px;"></i>
                                         </div>
                                     </div>
-                                    <div class="mock-field">
-                                        <div class="mock-label">2. 写真撮影</div>
-                                        <div class="mock-photo-box">
-                                            <i data-lucide="camera" size="18"></i>
-                                            <span style="font-size: 0.6rem; margin-top: 0.2rem;">タップして撮影</span>
+                                    <!-- 災害内容 -->
+                                    <div class="mock-field" style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.6rem;">
+                                        <div class="mock-label" style="font-size: 0.65rem; font-weight: 700; color: #475569; margin-bottom: 0.3rem;">災害内容</div>
+                                        <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.3rem 0.5rem; color: #94a3b8; font-size: 0.65rem; display: flex; justify-content: space-between; align-items: center; background: white;">
+                                            選択してください
+                                            <i data-lucide="chevron-down" style="width: 12px; height: 12px;"></i>
                                         </div>
                                     </div>
-                                    <div class="mock-field">
-                                        <div class="mock-label">3. 災害状況</div>
-                                        <div style="font-weight: 700; color: var(--accent);">● 道路冠水 (約30cm浸水)</div>
+                                    <!-- 位置情報 -->
+                                    <div class="mock-field" style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.6rem; display: flex; flex-direction: column;">
+                                        <div class="mock-label" style="font-size: 0.65rem; font-weight: 700; color: #475569; margin-bottom: 0.3rem;">位置情報</div>
+                                        <div class="mock-map-box" style="height: 110px; background: #cbd5e1; border-radius: 6px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                            <!-- 地図の背景風グラフィック -->
+                                            <div style="position: absolute; width: 100%; height: 100%; opacity: 0.15; background-image: radial-gradient(circle, #000 10%, transparent 10%); background-size: 15px 15px;"></div>
+                                            <!-- 道路を模した線 -->
+                                            <div style="position: absolute; width: 120%; height: 6px; background: #94a3b8; transform: rotate(-10deg); top: 50%;"></div>
+                                            <div style="position: absolute; width: 120%; height: 6px; background: #94a3b8; transform: rotate(45deg); left: 30%;"></div>
+                                            <!-- ズームコントロール -->
+                                            <div style="position: absolute; top: 5px; left: 5px; background: white; border: 1px solid #cbd5e1; border-radius: 3px; display: flex; flex-direction: column; font-size: 0.6rem; font-weight: 900; overflow: hidden; color: #334155;">
+                                                <span style="padding: 0.1rem 0.25rem; border-bottom: 1px solid #cbd5e1;">+</span>
+                                                <span style="padding: 0.1rem 0.25rem;">−</span>
+                                            </div>
+                                            <!-- マップピン -->
+                                            <i data-lucide="map-pin" class="mock-map-pin" style="color: #2563eb; position: absolute; z-index: 10; margin-top: -10px;" size="20"></i>
+                                            <span style="font-size: 0.5rem; color: #1e293b; background: rgba(255,255,255,0.9); padding: 0.1rem 0.3rem; border-radius: 3px; position: absolute; bottom: 5px; z-index: 10; font-weight: 700; border: 1px solid #cbd5e1;">国道444号付近</span>
+                                        </div>
                                     </div>
-                                    <div class="mock-btn">報告を送信する</div>
+                                    <!-- 確認画面へボタン -->
+                                    <div style="background: #d90429; color: white; text-align: center; padding: 0.6rem; border-radius: 6px; font-weight: 900; font-size: 0.75rem; margin-top: 0.2rem; cursor: pointer;">確認画面へ</div>
                                 </div>
                             </div>
                         </div>
