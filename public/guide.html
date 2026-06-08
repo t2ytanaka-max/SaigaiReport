@@ -786,41 +786,96 @@
                     <div>
                         <!-- スマホモック：履歴画面 -->
                         <div class="phone-mockup">
-                            <div class="screen">
-                                <div class="app-header">
-                                    <div class="app-title"><i data-lucide="list" size="14"></i>災害状況一覧</div>
-                                    <div class="mock-badge" style="background: var(--accent); color: white; font-size: 0.5rem; padding: 0.1rem 0.2rem;">LIVE中</div>
+                            <div class="screen" style="background: white;">
+                                <!-- ヘッダー -->
+                                <div class="app-header" style="background: white; color: var(--secondary); border-bottom: 1px solid #e2e8f0; padding: 0.8rem 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="font-size: 0.75rem; font-weight: 900; color: #1e293b;">全災害情報タイムライン</div>
+                                    <i data-lucide="bell" style="width: 13px; height: 13px; color: #2563eb;"></i>
                                 </div>
-                                <div class="history-mock">
-                                    <div class="mock-toggle">
-                                        <div class="mock-toggle-btn active">リスト</div>
-                                        <div class="mock-toggle-btn">地図</div>
+                                <div class="history-mock" style="background: white; position: relative; height: calc(100% - 35px); display: flex; flex-direction: column;">
+                                    <!-- タブ切り替え -->
+                                    <div class="mock-toggle" style="background: #f1f5f9; padding: 0.2rem; margin: 0.4rem; border-radius: 8px; display: flex; gap: 0.2rem;">
+                                        <div class="mock-toggle-btn" style="flex: 1; text-align: center; padding: 0.35rem; font-weight: 700; border-radius: 6px; font-size: 0.65rem; background: white; color: #1e293b; display: flex; align-items: center; justify-content: center; gap: 0.2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                                            <i data-lucide="clipboard-list" style="width: 10px; height: 10px; color: #2563eb;"></i>一覧
+                                        </div>
+                                        <div class="mock-toggle-btn" style="flex: 1; text-align: center; padding: 0.35rem; font-weight: 700; border-radius: 6px; font-size: 0.65rem; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 0.2rem;">
+                                            <i data-lucide="map" style="width: 10px; height: 10px;"></i>地図
+                                        </div>
+                                        <div class="mock-toggle-btn" style="flex: 1; text-align: center; padding: 0.35rem; font-weight: 700; border-radius: 6px; font-size: 0.65rem; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 0.2rem;">
+                                            <i data-lucide="video" style="width: 10px; height: 10px;"></i>LIVE
+                                        </div>
                                     </div>
-                                    <div class="mock-list">
-                                        <!-- サンプル現場1 -->
-                                        <div class="mock-list-item">
-                                            <div class="mock-item-header">
-                                                <span>第3分団：玖島1丁目付近</span>
-                                                <span class="mock-badge">道路冠水</span>
+                                    
+                                    <!-- リスト -->
+                                    <div class="mock-list" style="padding: 0.4rem; display: flex; flex-direction: column; gap: 0.6rem; overflow-y: auto; flex: 1; margin-bottom: 40px;">
+                                        <!-- 1分団 -->
+                                        <div style="display: flex; gap: 0.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem; font-size: 0.65rem; text-align: left;">
+                                            <div style="width: 55px; height: 55px; background: #cbd5e1; border-radius: 6px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+                                                <i data-lucide="image" style="width: 14px; height: 14px;"></i>
                                             </div>
-                                            <div style="color: #475569;">大村公園入口前の道路が約30cm冠水。通行注意。</div>
-                                            <div class="mock-item-meta">
-                                                <span><i data-lucide="clock" size="10"></i> 10分前</span>
-                                                <span><i data-lucide="image" size="10"></i> 写真あり</span>
-                                            </div>
-                                        </div>
-                                        <!-- サンプル現場2 -->
-                                        <div class="mock-list-item" style="border-left-color: #f59e0b;">
-                                            <div class="mock-item-header">
-                                                <span>第5分団：本小路町付近</span>
-                                                <span class="mock-badge" style="background:#fef3c7; color:#d97706;">土砂流入（小）</span>
-                                            </div>
-                                            <div style="color: #475569;">市役所裏の法面から少量の土砂崩落。歩道塞ぐ。</div>
-                                            <div class="mock-item-meta">
-                                                <span><i data-lucide="clock" size="10"></i> 25分前</span>
-                                                <span><i data-lucide="image" size="10"></i> なし</span>
+                                            <div style="flex: 1; display: flex; flex-direction: column;">
+                                                <div style="font-weight: 700; color: #1e293b; line-height: 1.2;">
+                                                    1分団（久原） 路面に土砂流出 
+                                                    <span style="color: #2563eb; font-weight: 700; font-size: 0.55rem; display: block; margin-top: 0.1rem;">応急処置済み 2次対応者へ引き継ぎ</span>
+                                                </div>
+                                                <div style="color: #64748b; font-size: 0.55rem; margin-top: 0.15rem;">2026/03/30 13:47:00</div>
+                                                <div style="color: #334155; font-size: 0.55rem;">サンプル災害情報</div>
+                                                <div style="display: flex; justify-content: flex-end; gap: 0.5rem; color: #94a3b8; margin-top: 0.15rem;">
+                                                    <i data-lucide="trash-2" style="width: 9px; height: 9px;"></i>
+                                                    <i data-lucide="edit-3" style="width: 9px; height: 9px;"></i>
+                                                    <i data-lucide="map-pin" style="width: 9px; height: 9px;"></i>
+                                                </div>
                                             </div>
                                         </div>
+                                        <!-- 11分団 -->
+                                        <div style="display: flex; gap: 0.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem; font-size: 0.65rem; text-align: left;">
+                                            <div style="width: 55px; height: 55px; background: #cbd5e1; border-radius: 6px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+                                                <i data-lucide="image" style="width: 14px; height: 14px;"></i>
+                                            </div>
+                                            <div style="flex: 1; display: flex; flex-direction: column;">
+                                                <div style="font-weight: 700; color: #1e293b; line-height: 1.2;">
+                                                    11分団（立福寺） 土砂崩れ 
+                                                    <span style="color: #16a34a; font-weight: 700; font-size: 0.55rem; display: block; margin-top: 0.1rem;">現場不明 差戻し</span>
+                                                </div>
+                                                <div style="color: #64748b; font-size: 0.55rem; margin-top: 0.15rem;">2026/03/30 13:47:00</div>
+                                                <div style="color: #334155; font-size: 0.55rem;">サンプル災害情報 石積崩落</div>
+                                                <div style="display: flex; justify-content: flex-end; gap: 0.5rem; color: #94a3b8; margin-top: 0.15rem;">
+                                                    <i data-lucide="trash-2" style="width: 9px; height: 9px;"></i>
+                                                    <i data-lucide="edit-3" style="width: 9px; height: 9px;"></i>
+                                                    <i data-lucide="map-pin" style="width: 9px; height: 9px;"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 14分団 -->
+                                        <div style="display: flex; gap: 0.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem; font-size: 0.65rem; text-align: left;">
+                                            <div style="width: 55px; height: 55px; background: #cbd5e1; border-radius: 6px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+                                                <i data-lucide="image" style="width: 14px; height: 14px;"></i>
+                                            </div>
+                                            <div style="flex: 1; display: flex; flex-direction: column;">
+                                                <div style="font-weight: 700; color: #1e293b; line-height: 1.2;">
+                                                    14分団（二本松） 路面破壊 
+                                                    <span style="color: #dc2626; font-weight: 700; font-size: 0.55rem; display: block; margin-top: 0.1rem;">対応中</span>
+                                                </div>
+                                                <div style="color: #64748b; font-size: 0.55rem; margin-top: 0.15rem;">2026/03/30 13:31:00</div>
+                                                <div style="color: #334155; font-size: 0.55rem;">サンプル災害情報</div>
+                                                <div style="display: flex; justify-content: flex-end; gap: 0.5rem; color: #94a3b8; margin-top: 0.15rem;">
+                                                    <i data-lucide="trash-2" style="width: 9px; height: 9px;"></i>
+                                                    <i data-lucide="edit-3" style="width: 9px; height: 9px;"></i>
+                                                    <i data-lucide="map-pin" style="width: 9px; height: 9px;"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 右下の丸いプラスボタン -->
+                                    <div style="position: absolute; bottom: 50px; right: 12px; width: 40px; height: 40px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 10px rgba(37,99,235,0.4); cursor: pointer; z-index: 20;">
+                                        <i data-lucide="plus" style="width: 18px; height: 18px;"></i>
+                                    </div>
+
+                                    <!-- ナビゲーションフッター -->
+                                    <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; color: #2563eb; font-weight: 700; flex-direction: column; gap: 0.1rem; z-index: 10;">
+                                        <i data-lucide="clipboard-list" style="width: 12px; height: 12px;"></i>
+                                        災害報告
                                     </div>
                                 </div>
                             </div>
