@@ -896,27 +896,61 @@
                     <div>
                         <!-- スマホモック：LIVE画面 -->
                         <div class="phone-mockup">
-                            <div class="screen">
-                                <div class="app-header">
-                                    <div class="app-title"><i data-lucide="video" size="14"></i>災害LIVE配信</div>
-                                    <div>視聴中</div>
+                            <div class="screen" style="background: white;">
+                                <!-- ヘッダー -->
+                                <div class="app-header" style="background: white; color: var(--secondary); border-bottom: 1px solid #e2e8f0; padding: 0.8rem 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="font-size: 0.75rem; font-weight: 900; color: #1e293b;">全災害情報タイムライン</div>
+                                    <i data-lucide="bell" style="width: 13px; height: 13px; color: #2563eb;"></i>
                                 </div>
-                                <div class="live-mock">
-                                    <div class="live-badge-mock">
-                                        <span style="width: 6px; height: 6px; background: white; border-radius: 50%;"></span>
-                                        LIVE
-                                    </div>
-                                    <div class="live-viewer-mock">
-                                        <i data-lucide="eye" size="10"></i> 14人
-                                    </div>
-                                    
-                                    <div class="play-btn-mock">
-                                        <i data-lucide="play" size="24" style="margin-left: 3px;"></i>
+                                <div class="history-mock" style="background: white; position: relative; height: calc(100% - 35px); display: flex; flex-direction: column;">
+                                    <!-- タブ切り替え -->
+                                    <div class="mock-toggle" style="background: #f1f5f9; padding: 0.2rem; margin: 0.4rem; border-radius: 8px; display: flex; gap: 0.2rem;">
+                                        <div class="mock-toggle-btn" style="flex: 1; text-align: center; padding: 0.35rem; font-weight: 700; border-radius: 6px; font-size: 0.65rem; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 0.2rem;">
+                                            <i data-lucide="clipboard-list" style="width: 10px; height: 10px;"></i>一覧
+                                        </div>
+                                        <div class="mock-toggle-btn" style="flex: 1; text-align: center; padding: 0.35rem; font-weight: 700; border-radius: 6px; font-size: 0.65rem; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 0.2rem;">
+                                            <i data-lucide="map" style="width: 10px; height: 10px;"></i>地図
+                                        </div>
+                                        <div class="mock-toggle-btn active" style="flex: 1; text-align: center; padding: 0.35rem; font-weight: 700; border-radius: 6px; font-size: 0.65rem; background: white; color: #ef4444; display: flex; align-items: center; justify-content: center; gap: 0.2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #fecaca;">
+                                            <i data-lucide="video" style="width: 10px; height: 10px; color: #ef4444;"></i>LIVE
+                                        </div>
                                     </div>
 
-                                    <div class="live-bottom-mock">
-                                        <div style="font-weight: 700; margin-bottom: 0.2rem;">玖島川の水位確認カメラ</div>
-                                        <div style="font-size: 0.6rem; color: #cbd5e1;">第1分団より配信中</div>
+                                    <!-- サブタブ -->
+                                    <div style="display: flex; gap: 0.5rem; padding: 0 0.4rem; margin-bottom: 0.4rem;">
+                                        <div style="flex: 1; text-align: center; padding: 0.3rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; background: #f1f5f9; color: #64748b;">LIVE視聴</div>
+                                        <div style="flex: 1; text-align: center; padding: 0.3rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; background: white; color: #2563eb; border: 1px solid #bfdbfe;">自分が配信する</div>
+                                    </div>
+
+                                    <!-- LIVE配信情報ボックス -->
+                                    <div style="background: #eff6ff; border: 1px solid #dbeafe; border-radius: 8px; padding: 0.5rem; margin: 0 0.4rem 0.4rem; display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.65rem; text-align: left; position: relative;">
+                                        <div style="font-weight: 700; color: #1e40af;">【省データ・コマ送りLIVE】</div>
+                                        <div style="color: #1e40af; line-height: 1.2; padding-right: 35px; font-size: 0.6rem;">3秒おきに画像を送信します。画面を閉じたりスリープさせたりしないでください。</div>
+                                        <div style="position: absolute; right: 8px; top: 8px; background: #bfdbfe; color: #1e40af; padding: 0.1rem 0.2rem; border-radius: 3px; font-size: 0.5rem; font-weight: 700;">配信中</div>
+                                    </div>
+
+                                    <!-- 中継を停止するボタン -->
+                                    <div style="background: #d90429; color: white; text-align: center; padding: 0.5rem; border-radius: 6px; font-weight: 900; font-size: 0.75rem; margin: 0 0.4rem 0.4rem; cursor: pointer;">中継を停止する</div>
+
+                                    <!-- LIVE映像プレビュー領域 -->
+                                    <div style="flex: 1; border: 2px solid #ef4444; border-radius: 8px; margin: 0 0.4rem 45px; overflow: hidden; position: relative; background: #cbd5e1; min-height: 120px;">
+                                        <!-- 地図やカメラ背景を模したプレビュー -->
+                                        <div style="position: absolute; width: 100%; height: 100%; opacity: 0.15; background-image: linear-gradient(45deg, #000 25%, transparent 25%), linear-gradient(-45deg, #000 25%, transparent 25%); background-size: 15px 15px;"></div>
+                                        <div style="position: absolute; top: 8px; left: 8px; background: #fecaca; color: #dc2626; padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 900; font-size: 0.55rem; display: flex; align-items: center; gap: 0.15rem;">
+                                            <span style="width: 4px; height: 4px; background: #dc2626; border-radius: 50%;"></span>
+                                            LIVE配信中
+                                        </div>
+                                    </div>
+
+                                    <!-- 右下の丸いプラスボタン -->
+                                    <div style="position: absolute; bottom: 50px; right: 12px; width: 40px; height: 40px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 10px rgba(37,99,235,0.4); cursor: pointer; z-index: 20;">
+                                        <i data-lucide="plus" style="width: 18px; height: 18px;"></i>
+                                    </div>
+
+                                    <!-- ナビゲーションフッター -->
+                                    <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; color: #2563eb; font-weight: 700; flex-direction: column; gap: 0.1rem; z-index: 10;">
+                                        <i data-lucide="clipboard-list" style="width: 12px; height: 12px;"></i>
+                                        災害報告
                                     </div>
                                 </div>
                             </div>
