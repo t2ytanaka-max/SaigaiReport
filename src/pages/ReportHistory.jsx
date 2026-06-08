@@ -9,7 +9,6 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import LiveView from '../components/LiveView';
-import { GAS_URL } from '../config';
 
 // Fix for default marker icon in React Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -36,33 +35,7 @@ const RemoteImage = ({ src, alt, className, onClick, ...props }) => {
     }, [src]);
 
     const handleError = () => {
-        if (retryCount === 0 && src && typeof src === 'string' && src.startsWith('http')) {
-            setRetryCount(1);
-            setLoading(true);
-            let id = null;
-            const match1 = src.match(/id=([a-zA-Z0-9_-]+)/);
-            const match2 = src.match(/\/d\/([a-zA-Z0-9_-]+)/);
-            if (match1) id = match1[1];
-            else if (match2) id = match2[1];
-
-            if (id && GAS_URL) {
-                fetch(`${GAS_URL}?action=getImage&id=${id}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.status === 'success' && data.image) {
-                            setImgSrc(data.image);
-                        } else {
-                            setImgSrc(null);
-                        }
-                    })
-                    .catch(() => setImgSrc(null))
-                    .finally(() => setLoading(false));
-            } else {
-                setLoading(false);
-            }
-        } else {
-            setLoading(false);
-        }
+        setLoading(false);
     };
 
     if (!imgSrc && !loading) {

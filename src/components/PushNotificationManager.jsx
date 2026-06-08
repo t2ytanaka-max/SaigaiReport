@@ -21,9 +21,13 @@ export default function PushNotificationManager() {
         if (Notification.permission === 'granted') {
             handleRequestPermission();
         } else if (Notification.permission === 'default') {
-            // まだ未設定の場合は3秒後に案内バナーを表示
-            const timer = setTimeout(() => setShowBanner(true), 3000);
-            return () => clearTimeout(timer);
+            // 一度閉じた場合は表示しない
+            const isDismissed = localStorage.getItem('saigai_push_banner_dismissed') === 'true';
+            if (!isDismissed) {
+                // まだ未設定の場合は3秒後に案内バナーを表示
+                const timer = setTimeout(() => setShowBanner(true), 3000);
+                return () => clearTimeout(timer);
+            }
         }
     }, [isSupported]);
 
@@ -73,6 +77,8 @@ export default function PushNotificationManager() {
         }
     };
 
+    const isDismissed = localStorage.getItem('saigai_push_banner_dismissed') === 'true';
+    if (isDismissed) return null;
     if (!showBanner && permission !== 'default') return null;
 
     return (
@@ -92,7 +98,13 @@ export default function PushNotificationManager() {
                             </p>
                         </div>
                     </div>
-                    <button onClick={() => setShowBanner(false)} className="text-gray-400 p-1">
+                    <button 
+                        onClick={() => {
+                            setShowBanner(false);
+                            localStorage.setItem('saigai_push_banner_dismissed', 'true');
+                        }} 
+                        className="text-gray-400 p-1"
+                    >
                         <X size={20} />
                     </button>
                 </div>

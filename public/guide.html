@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live大村市消防団 - ご利用ガイド</title>
+    
+    <!-- Google Fonts: Inter & Noto Sans JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --primary: #f97316; /* 消防オレンジ */
+            --primary-dark: #ea580c;
+            --secondary: #0f172a; /* ディープネイビー */
+            --secondary-light: #1e293b;
+            --accent: #ef4444; /* レッド */
+            --bg-light: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ヘッダー */
+        header {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+            color: white;
+            padding: 2.5rem 1rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 5px solid var(--primary);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .logo-container {
+            width: 90px;
+            height: 90px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid var(--primary);
+            overflow: hidden;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #ffffff, #fed7aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: #94a3b8;
+            font-weight: 700;
+        }
+
+        /* コンテナ */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* セクション共通 */
+        section {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--secondary);
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 0.5rem;
+            width: fit-content;
+        }
+
+        h2 i {
+            color: var(--primary);
+        }
+
+        /* タブ切り替え（導入方法） */
+        .tab-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            background: #f1f5f9;
+            padding: 0.35rem;
+            border-radius: 14px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            background: transparent;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--secondary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 導入ステップカード */
+        .step-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media(min-width: 768px) {
+            .step-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .step-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-num {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            font-weight: 900;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+            border: 2px solid white;
+        }
+
+        .step-icon-wrapper {
+            font-size: 2rem;
+            margin: 1rem 0;
+            color: var(--secondary);
+            display: flex;
+            justify-content: center;
+        }
+
+        .step-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .step-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: left;
+        }
+
+        /* アプリ使用マニュアルセクション */
+        .manual-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+        }
+
+        .manual-item {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        @media(min-width: 768px) {
+            .manual-item {
+                grid-template-columns: 1fr 1fr;
+            }
+            .manual-item.reverse {
+                direction: rtl;
+            }
+            .manual-item.reverse .manual-desc {
+                direction: ltr;
+            }
+        }
+
+        .manual-desc h3 {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .manual-desc p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .manual-desc ul {
+            list-style: none;
+        }
+
+        .manual-desc li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .manual-desc li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: 900;
+        }
+
+        /* スマホモックアップUI */
+        .phone-mockup {
+            width: 100%;
+            max-width: 290px;
+            height: 540px;
+            background: #000;
+            border-radius: 36px;
+            margin: 0 auto;
+            border: 8px solid #333;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            font-size: 0.8rem;
+        }
+
+        /* インナー画面 */
+        .screen {
+            flex: 1;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 疑似アプリヘッダー */
+        .app-header {
+            background: var(--secondary);
+            color: white;
+            padding: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 900;
+            font-size: 0.75rem;
+        }
+
+        .app-title {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* 報告画面モックアップ */
+        .form-mock {
+            padding: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .mock-field {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+        .mock-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+        }
+
+        .mock-map-box {
+            height: 90px;
+            background: #cbd5e1;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .mock-map-pin {
+            position: absolute;
+            color: var(--accent);
+            animation: bounce 1s infinite alternate;
+        }
+
+        .mock-photo-box {
+            height: 100px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-weight: 700;
+            background: #f8fafc;
+        }
+
+        .mock-btn {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 0.6rem;
+            border-radius: 8px;
+            font-weight: 900;
+            font-size: 0.75rem;
+            box-shadow: 0 4px 10px rgba(249,115,22,0.2);
+        }
+
+        /* 履歴・地図画面モックアップ */
+        .history-mock {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .mock-toggle {
+            display: flex;
+            background: #e2e8f0;
+            padding: 0.2rem;
+            margin: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .mock-toggle-btn {
+            flex: 1;
+            text-align: center;
+            padding: 0.3rem;
+            font-weight: 700;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+
+        .mock-toggle-btn.active {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .mock-list {
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .mock-list-item {
+            background: white;
+            border-left: 4px solid var(--accent);
+            padding: 0.5rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            font-size: 0.7rem;
+        }
+
+        .mock-item-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .mock-badge {
+            background: #fef2f2;
+            color: #ef4444;
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: 900;
+        }
+
+        .mock-item-meta {
+            color: var(--text-muted);
+            font-size: 0.65rem;
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.2rem;
+        }
+
+        /* LIVE配信画面モックアップ */
+        .live-mock {
+            flex: 1;
+            background: #000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .live-badge-mock {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ef4444;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 900;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            animation: pulse 1s infinite;
+        }
+
+        .live-viewer-mock {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.6rem;
+        }
+
+        .live-bottom-mock {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 1rem 0.8rem;
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        .play-btn-mock {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .play-btn-mock:hover {
+            transform: scale(1.1);
+        }
+
+        /* セキュリティポリシー */
+        .policy-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .policy-box h4 {
+            font-weight: 700;
+            color: var(--secondary);
+            margin-top: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .policy-box p, .policy-box li {
+            font-size: 0.85rem;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+
+        .policy-box ul {
+            padding-left: 1.2rem;
+        }
+
+        /* フッター */
+        footer {
+            background: var(--secondary);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 4rem;
+            border-top: 5px solid var(--primary);
+            font-size: 0.85rem;
+        }
+
+        footer p {
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+
+        /* アニメーション */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-8px); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ヘッダー -->
+    <header>
+        <div class="logo-container">
+            <img src="/pwa-192x192.png" alt="大村市消防団">
+        </div>
+        <h1>Live大村市消防団</h1>
+        <p>関係者専用ポータル - ご利用ガイド</p>
+    </header>
+
+    <div class="container">
+
+        <!-- イントロダクション -->
+        <section>
+            <h2><i data-lucide="info"></i>本ポータルについて</h2>
+            <p style="font-weight: 700; margin-bottom: 0.5rem;">大村市消防団員の皆様へ</p>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+                本システムは、災害現場における位置情報や被災写真の迅速な共有、およびLIVE配信機能を用いたリアルタイムな現場確認を行うための関係者（団員）専用ポータルアプリです。
+                公式LINE「長崎県大村市消防団DX」のリッチメニューから簡単に開き、スマートフォンやPCですぐに利用できます。
+            </p>
+        </section>
+
+        <!-- 導入方法（PWA追加方法） -->
+        <section id="install">
+            <h2><i data-lucide="smartphone"></i>スマホのホーム画面に追加する（導入方法）</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">
+                本アプリは、スマートフォンのホーム画面にアイコンを追加することで、いつでも通常のアプリのように1タップで起動できるようになります。
+            </p>
+            
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('ios')"><i data-lucide="apple"></i>iPhone (iOS) の場合</button>
+                <button class="tab-btn" onclick="switchTab('android')"><i data-lucide="smartphone"></i>Android の場合</button>
+            </div>
+
+            <!-- iOS手順 -->
+            <div id="ios-steps" class="tab-content active">
+                <div class="step-list">
+                    <div class="step-card">
+                        <div class="step-num">1</div>
+                        <div class="step-icon-wrapper"><i data-lucide="compass"></i></div>
+                        <h3>Safariで開く</h3>
+                        <p>公式LINEからリンクをタップしてアプリを開き、必ず標準ブラウザの「Safari」で開いてください。（LINE内ブラウザではホーム追加ができません）</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">2</div>
+                        <div class="step-icon-wrapper"><i data-lucide="share"></i></div>
+                        <h3>共有ボタンをタップ</h3>
+                        <p>画面下部にある「共有アイコン（四角から矢印が飛び出ているマーク）」をタップします。</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">3</div>
+                        <div class="step-icon-wrapper"><i data-lucide="plus-square"></i></div>
+                        <h3>ホーム画面に追加</h3>
+                        <p>メニュー内の「ホーム画面に追加」をタップすると、スマホの画面に大村市消防団のアイコンが追加され導入完了です。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Android手順 -->
+            <div id="android-steps" class="tab-content">
+                <div class="step-list">
+                    <div class="step-card">
+                        <div class="step-num">1</div>
+                        <div class="step-icon-wrapper"><i data-lucide="chrome"></i></div>
+                        <h3>Chromeで開く</h3>
+                        <p>公式LINE等からリンクを開き、標準ブラウザである「Google Chrome」でアプリを表示させます。</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">2</div>
+                        <div class="step-icon-wrapper"><i data-lucide="more-vertical"></i></div>
+                        <h3>メニューをタップ</h3>
+                        <p>画面右上（または右下）にある「その他メニュー（点3つのマーク）」をタップします。</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">3</div>
+                        <div class="step-icon-wrapper"><i data-lucide="download"></i></div>
+                        <h3>アプリをインストール</h3>
+                        <p>「アプリをインストール」または「ホーム画面に追加」をタップすると、自動的にスマホ画面にアイコンが作成されます。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 使用方法 -->
+        <section id="manual">
+            <h2><i data-lucide="book-open"></i>アプリの使用方法</h2>
+            
+            <div class="manual-grid">
+                
+                <!-- 1. 現場報告のしかた -->
+                <div class="manual-item">
+                    <div class="manual-desc">
+                        <h3><span style="background: var(--primary); color: white; border-radius: 50%; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem;">1</span>現場情報の報告</h3>
+                        <p>災害現場に到着したら、状況を簡単に報告できます。</p>
+                        <ul>
+                            <li><strong>位置情報の自動選択</strong>：GPSボタンを押すと、今いる場所が自動的に地図上にセットされます。</li>
+                            <li><strong>現場写真の添付</strong>：カメラボタンから、その場で撮影した写真をすぐに添付できます。</li>
+                            <li><strong>災害種別の選択</strong>：道路冠水、土砂崩れなど、タップするだけで選べます。</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <!-- スマホモック：報告画面 -->
+                        <div class="phone-mockup">
+                            <div class="screen">
+                                <div class="app-header">
+                                    <div class="app-title"><i data-lucide="alert-triangle" size="14"></i>現場報告</div>
+                                    <div>大村市消防団</div>
+                                </div>
+                                <div class="form-mock">
+                                    <div class="mock-field">
+                                        <div class="mock-label">1. 現在地（地図で確認）</div>
+                                        <div class="mock-map-box">
+                                            <i data-lucide="map-pin" class="mock-map-pin" size="24"></i>
+                                            <span style="font-size: 0.6rem; color: #475569; position: absolute; bottom: 5px;">大村市玖島1丁目（大村公園付近）</span>
+                                        </div>
+                                    </div>
+                                    <div class="mock-field">
+                                        <div class="mock-label">2. 写真撮影</div>
+                                        <div class="mock-photo-box">
+                                            <i data-lucide="camera" size="18"></i>
+                                            <span style="font-size: 0.6rem; margin-top: 0.2rem;">タップして撮影</span>
+                                        </div>
+                                    </div>
+                                    <div class="mock-field">
+                                        <div class="mock-label">3. 災害状況</div>
+                                        <div style="font-weight: 700; color: var(--accent);">● 道路冠水 (約30cm浸水)</div>
+                                    </div>
+                                    <div class="mock-btn">報告を送信する</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 一覧と地図の確認 -->
+                <div class="manual-item reverse">
+                    <div class="manual-desc">
+                        <h3><span style="background: var(--primary); color: white; border-radius: 50%; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem;">2</span>報告状況の確認と地図</h3>
+                        <p>他の団員が投稿した災害報告を、リアルタイムに把握できます。</p>
+                        <ul>
+                            <li><strong>地図表示</strong>：大村市全域の地図上に、災害情報ピンが配置されます。タップすると詳細が見られます。</li>
+                            <li><strong>一覧リスト</strong>：時系列に報告内容、担当分団、現場写真、報告日時が一覧表示されます。</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <!-- スマホモック：履歴画面 -->
+                        <div class="phone-mockup">
+                            <div class="screen">
+                                <div class="app-header">
+                                    <div class="app-title"><i data-lucide="list" size="14"></i>災害状況一覧</div>
+                                    <div class="mock-badge" style="background: var(--accent); color: white; font-size: 0.5rem; padding: 0.1rem 0.2rem;">LIVE中</div>
+                                </div>
+                                <div class="history-mock">
+                                    <div class="mock-toggle">
+                                        <div class="mock-toggle-btn active">リスト</div>
+                                        <div class="mock-toggle-btn">地図</div>
+                                    </div>
+                                    <div class="mock-list">
+                                        <!-- サンプル現場1 -->
+                                        <div class="mock-list-item">
+                                            <div class="mock-item-header">
+                                                <span>第3分団：玖島1丁目付近</span>
+                                                <span class="mock-badge">道路冠水</span>
+                                            </div>
+                                            <div style="color: #475569;">大村公園入口前の道路が約30cm冠水。通行注意。</div>
+                                            <div class="mock-item-meta">
+                                                <span><i data-lucide="clock" size="10"></i> 10分前</span>
+                                                <span><i data-lucide="image" size="10"></i> 写真あり</span>
+                                            </div>
+                                        </div>
+                                        <!-- サンプル現場2 -->
+                                        <div class="mock-list-item" style="border-left-color: #f59e0b;">
+                                            <div class="mock-item-header">
+                                                <span>第5分団：本小路町付近</span>
+                                                <span class="mock-badge" style="background:#fef3c7; color:#d97706;">土砂流入（小）</span>
+                                            </div>
+                                            <div style="color: #475569;">市役所裏の法面から少量の土砂崩落。歩道塞ぐ。</div>
+                                            <div class="mock-item-meta">
+                                                <span><i data-lucide="clock" size="10"></i> 25分前</span>
+                                                <span><i data-lucide="image" size="10"></i> なし</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. LIVE配信 -->
+                <div class="manual-item">
+                    <div class="manual-desc">
+                        <h3><span style="background: var(--primary); color: white; border-radius: 50%; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem;">3</span>災害LIVE配信の視聴</h3>
+                        <p>災害対策本部や現地の団員が配信しているリアルタイム動画を視聴できます。</p>
+                        <ul>
+                            <li><strong>配信開始通知</strong>：他の団員がLIVE配信を開始すると、アプリ画面に通知バナーが表示されます。</li>
+                            <li><strong>タップして視聴</strong>：ビデオアイコンを押すだけで、現地の生の映像を音と動画で安全な場所から確認できます。</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <!-- スマホモック：LIVE画面 -->
+                        <div class="phone-mockup">
+                            <div class="screen">
+                                <div class="app-header">
+                                    <div class="app-title"><i data-lucide="video" size="14"></i>災害LIVE配信</div>
+                                    <div>視聴中</div>
+                                </div>
+                                <div class="live-mock">
+                                    <div class="live-badge-mock">
+                                        <span style="width: 6px; height: 6px; background: white; border-radius: 50%;"></span>
+                                        LIVE
+                                    </div>
+                                    <div class="live-viewer-mock">
+                                        <i data-lucide="eye" size="10"></i> 14人
+                                    </div>
+                                    
+                                    <div class="play-btn-mock">
+                                        <i data-lucide="play" size="24" style="margin-left: 3px;"></i>
+                                    </div>
+
+                                    <div class="live-bottom-mock">
+                                        <div style="font-weight: 700; margin-bottom: 0.2rem;">玖島川の水位確認カメラ</div>
+                                        <div style="font-size: 0.6rem; color: #cbd5e1;">第1分団より配信中</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- セキュリティポリシー -->
+        <section id="policy">
+            <h2><i data-lucide="shield-check"></i>セキュリティポリシー</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+                安全な情報共有のため、本システム利用時は以下のルールを必ず厳守してください。
+            </p>
+            
+            <div class="policy-box">
+                <h4>1. 目的</h4>
+                <p>本システムは、大村市消防団員間で迅速かつ正確な災害情報を共有することを目的に運用されています。情報の安全な取り扱いと個人情報の保護を目的とします。</p>
+                
+                <h4>2. アクセス管理（合言葉の厳守）</h4>
+                <p>アプリの起動に必要な「アクセス合言葉」は極秘情報です。<strong>外部の第三者や、SNS等で漏洩することは厳禁とします。</strong></p>
+                
+                <h4>3. 写真撮影・LIVE配信時の個人情報保護</h4>
+                <p>報告や配信の際には、以下の内容が極力写り込まないように撮影アングルを配慮してください。</p>
+                <ul>
+                    <li>個人が特定できる顔</li>
+                    <li>一般車両のナンバープレート</li>
+                    <li>個人宅の表札やプライバシー物</li>
+                </ul>
+                
+                <h4>4. データの取り扱い</h4>
+                <p>システム内の写真や動画データを私的利用のためにダウンロードしたり、個人のSNS（Twitter/X、Facebook、一般公開アカウント等）へ転載・公開することは一切禁止します。</p>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--accent); font-weight: 700;">※本システムに正しい合言葉で初めてログインした際にも、本ポリシーへの同意手続きが求められます。</p>
+        </section>
+
+    </div>
+
+    <!-- フッター -->
+    <footer>
+        <p>&copy; 2026 長崎県大村市消防団DX / 大村市役所</p>
+        <p style="font-size: 0.75rem;">本サイトは、公式LINE「長崎県大村市消防団DX」専用の利用マニュアルです。</p>
+    </footer>
+
+    <script>
+        // タブ切り替えロジック
+        function switchTab(platform) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (platform === 'ios') {
+                event.currentTarget.classList.add('active');
+                document.getElementById('ios-steps').classList.add('active');
+            } else if (platform === 'android') {
+                event.currentTarget.classList.add('active');
+                document.getElementById('android-steps').classList.add('active');
+            }
+        }
+
+        // アイコンロード
+        lucide.createIcons();
+    </script>
+</body>
+</html>

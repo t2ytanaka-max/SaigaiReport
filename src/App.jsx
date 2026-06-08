@@ -10,8 +10,8 @@ import AuthGate from './components/AuthGate';
 function App() {
   return (
     <>
-      <PushNotificationManager />
       <AuthGate>
+        <PushNotificationManager />
         <Routes>
           <Route path="/" element={<ReportHistory />} />
           <Route path="/report" element={<ReportForm />} />
