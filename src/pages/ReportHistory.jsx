@@ -63,6 +63,8 @@ export default function ReportHistory() {
     const [status, setStatus] = useState('loading');
     const [viewMode, setViewMode] = useState('list');
     const [selectedImage, setSelectedImage] = useState(null);
+    const [showPolicy, setShowPolicy] = useState(false);
+    const [policyData, setPolicyData] = useState(null);
     const previousReportIds = useRef(new Set());
     const isFirstLoad = useRef(true);
 
@@ -125,6 +127,13 @@ export default function ReportHistory() {
                 console.error("Firestore error:", error);
                 setStatus('error');
             });
+
+            // 共通ポリシーJSONの読み込み
+            fetch('/security_policy.json')
+                .then(res => res.json())
+                .then(data => setPolicyData(data))
+                .catch(err => console.error("Failed to load policy:", err));
+
             return () => unsubscribe();
         } catch (err) {
             console.error(err);
@@ -534,14 +543,87 @@ export default function ReportHistory() {
                     <span className="text-[10px] font-black uppercase tracking-[0.2em]">Fire Corps Report System</span>
                     <div className="w-6 h-px bg-gray-100"></div>
                 </div>
-                <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
-                    <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v2.0.0</span>
+                <div className="flex flex-col items-center">
+                    <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
+                        <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v2.0.0</span>
+                    </div>
+                    <button 
+                        onClick={() => setShowPolicy(true)} 
+                        className="text-[10px] text-blue-500 font-bold hover:underline mt-1.5"
+                    >
+                        セキュリティポリシー
+                    </button>
                 </div>
                 <div className="text-[9px] text-gray-400 font-medium text-center max-w-[320px] leading-relaxed mt-2">
                     Copyright &copy; 2026 大村市消防団 田中哲也. All rights reserved.<br />
                     本アプリに関する一切の権利（著作権を含む）は、開発者（大村市消防団 田中哲也）に帰属します。無断での複製、転載、再配布を禁じます。
                 </div>
             </footer>
+
+            {/* Security Policy Modal */}
+            {showPolicy && (
+                <div className="fixed inset-0 z-[4000] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[80vh] border border-gray-100">
+                        {/* Modal Header */}
+                        <div className="flex justify-between items-center p-4 border-b border-gray-100">
+                            <h2 className="text-base font-black text-gray-900">
+                                {policyData?.title || 'セキュリティポリシー'}
+                            </h2>
+                            <button 
+                                onClick={() => setShowPolicy(false)}
+                                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 text-sm font-bold"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        {/* Modal Content */}
+                        <div className="flex-1 overflow-y-auto p-5 text-xs text-gray-700 flex flex-col gap-4 select-none">
+                            {policyData ? (
+                                <>
+                                    <p className="font-bold leading-relaxed">{policyData.preamble}</p>
+                                    {policyData.sections.map((section, idx) => (
+                                        <div key={idx} className="flex flex-col gap-1.5 text-left">
+                                            <h3 className="font-black text-gray-900 border-l-4 border-orange-500 pl-2 text-sm">{section.title}</h3>
+                                            {section.text && <p className="leading-relaxed whitespace-pre-wrap">{section.text}</p>}
+                                            {section.sub && (
+                                                <div className="flex flex-col gap-2 pl-2">
+                                                    {section.sub.map((sub, sidx) => (
+                                                        <div key={sidx} className="flex flex-col gap-1">
+                                                            <h4 className="font-bold text-gray-800">{sub.title}</h4>
+                                                            <p className="leading-relaxed whitespace-pre-wrap">{sub.text}</p>
+                                                            {sub.bullets && (
+                                                                <ul className="list-disc pl-4 flex flex-col gap-0.5 text-gray-600">
+                                                                    {sub.bullets.map((b, bidx) => <li key={bidx}>{b}</li>)}
+                                                                </ul>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            {section.bullets && (
+                                                <ul className="list-disc pl-4 flex flex-col gap-0.5 text-gray-600">
+                                                    {section.bullets.map((b, bidx) => <li key={bidx}>{b}</li>)}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    ))}
+                                </>
+                            ) : (
+                                <div className="text-center py-10 font-bold text-gray-400">ポリシーを読み込み中...</div>
+                            )}
+                        </div>
+                        {/* Modal Footer */}
+                        <div className="p-4 border-t border-gray-100 flex justify-end">
+                            <button
+                                onClick={() => setShowPolicy(false)}
+                                className="px-5 py-2.5 bg-gray-900 text-white font-bold text-xs rounded-xl shadow-md hover:bg-gray-800"
+                            >
+                                閉じる
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
