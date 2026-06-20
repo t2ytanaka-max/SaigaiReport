@@ -821,14 +821,14 @@ export default function ReportForm() {
 
                 {/* Footer with Version Indicator */}
                 <footer className="mt-8 mb-24 py-6 border-t border-gray-100 flex flex-col items-center gap-2">
-                    <div className="flex items-center gap-2 text-gray-300">
-                        <div className="w-6 h-px bg-gray-100"></div>
+                    <div className="flex items-center gap-2 text-gray-900">
+                        <div className="w-6 h-px bg-gray-300"></div>
                         <span className="text-[10px] font-black uppercase tracking-[0.2em]">Fire Corps Report System</span>
-                        <div className="w-6 h-px bg-gray-100"></div>
+                        <div className="w-6 h-px bg-gray-300"></div>
                     </div>
                     <div className="flex flex-col items-center">
-                        <div className="bg-gray-50 px-3 py-1 rounded-full border border-gray-100 shadow-inner">
-                            <span className="text-[10px] text-gray-400 font-black tracking-widest">SYSTEM VERSION: v2.0.0</span>
+                        <div className="bg-gray-100 px-3 py-1 rounded-full border border-gray-300 shadow-inner">
+                            <span className="text-[10px] text-gray-900 font-black tracking-widest">SYSTEM VERSION: V3.0.0</span>
                         </div>
                         <button 
                             type="button"
@@ -838,7 +838,7 @@ export default function ReportForm() {
                             セキュリティポリシー
                         </button>
                     </div>
-                    <div className="text-[9px] text-gray-400 font-medium text-center max-w-[320px] leading-relaxed mt-2">
+                    <div className="text-[9px] text-gray-900 font-bold text-center max-w-[320px] leading-relaxed mt-2">
                         Copyright &copy; 2026 大村市消防団 田中哲也. All rights reserved.<br />
                         本アプリに関する一切の権利（著作権を含む）は、開発者（大村市消防団 田中哲也）に帰属します。無断での複製、転載、再配布を禁じます。
                     </div>
