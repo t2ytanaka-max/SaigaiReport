@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from './ui/Button';
 import { db_fs } from '../lib/firebase';
-import { collection, query, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { collection, query, onSnapshot, doc, setDoc, deleteDoc, getDocs } from 'firebase/firestore';
 import { Video, Camera, StopCircle, Eye, RefreshCw, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { getMyDeviceId } from '../lib/notifications';
 
@@ -49,20 +49,55 @@ export default function LiveView() {
         latestCorpRef.current = myCorp;
     }, [myCorp]);
 
-    // Watching mode stream listener
+    // Watching mode stream listener & cleanup timer
     useEffect(() => {
         if (mode === 'watch' && db_fs) {
+            // 古いゴミデータの物理クリーンアップ（1分以上更新がないデータを削除）
+            const cleanupQuery = query(collection(db_fs, "live_streams"));
+            getDocs(cleanupQuery).then(snapshot => {
+                const now = Date.now();
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    // 60秒以上古いストリームデータを物理削除
+                    if (data.timestamp && (now - data.timestamp > 60000 || now - data.timestamp < -60000)) {
+                        deleteDoc(doc(db_fs, "live_streams", docSnap.id))
+                            .then(() => console.log(`Cleaned up stale stream for ${docSnap.id}`))
+                            .catch(e => console.error(e));
+                    }
+                });
+            }).catch(err => console.error("Stale stream cleanup error:", err));
+
             const q = query(collection(db_fs, "live_streams"));
             const unsubscribe = onSnapshot(q, (snapshot) => {
-                const streams = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
+                const now = Date.now();
+                const streams = snapshot.docs
+                    .map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }))
+                    // 15秒以上更新がない、または未来の時刻すぎる配信（時計のズレ）は除外
+                    .filter(s => {
+                        const diff = now - (s.timestamp || 0);
+                        return diff > -10000 && diff < 15000;
+                    });
                 setActiveStreams(streams);
             }, (err) => {
                 console.error("Live streams listen error:", err);
             });
-            return () => unsubscribe();
+
+            // 5秒ごとに現在時刻で古いストリームを再フィルタリングするタイマー
+            const interval = setInterval(() => {
+                const now = Date.now();
+                setActiveStreams(prev => prev.filter(s => {
+                    const diff = now - (s.timestamp || 0);
+                    return diff > -10000 && diff < 15000;
+                }));
+            }, 5000);
+
+            return () => {
+                unsubscribe();
+                clearInterval(interval);
+            };
         }
     }, [mode]);
 
